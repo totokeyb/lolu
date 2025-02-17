@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Today's History, Zodiac, and Image</title>
+    <title>今天的历史、星座和图片</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -66,19 +66,19 @@
 </head>
 <body>
 
-    <h1>Today's History, Zodiac, and Image</h1>
+    <h1>今天的历史、星座和图片</h1>
 
     <!-- 显示当前日期 -->
     <div class="date" id="currentDate"></div>
 
     <!-- 显示图片 -->
     <div class="image-container" id="imageContainer">
-        <img id="historyImage" src="" alt="History Image" onclick="updateImage()">
+        <img id="historyImage" src="" alt="历史图片" onclick="updateImage()">
     </div>
 
     <!-- 显示历史事件 -->
     <div class="history-events" id="historyEvents">
-        <h2>Today's Major Historical Events</h2>
+        <h2>今天的重大历史事件</h2>
         <ul id="eventsList">
             <!-- 历史事件将通过JS填充 -->
         </ul>
@@ -86,9 +86,9 @@
 
     <!-- 显示星座 -->
     <div class="zodiac-container" id="zodiacContainer">
-        <h2>Your Zodiac Sign Today:</h2>
+        <h2>你今天的星座：</h2>
         <p id="zodiacText"></p>
-        <img id="zodiacImage" src="" alt="Zodiac Image">
+        <img id="zodiacImage" src="" alt="星座图片">
     </div>
 
     <script>
@@ -102,7 +102,7 @@
 
         // 显示当前日期
         const currentDateElement = document.getElementById('currentDate');
-        currentDateElement.textContent = `Today is: ${formattedDate}`;
+        currentDateElement.textContent = `今天是：${formattedDate}`;
 
         // 事件数据（示例，添加更多事件）
         const historicalEvents = {
@@ -177,7 +177,7 @@
         // 显示星座信息
         const zodiacText = document.getElementById('zodiacText');
         const zodiacImageElement = document.getElementById('zodiacImage');
-        zodiacText.textContent = `Your Zodiac Sign Today: ${currentZodiac}`;
+        zodiacText.textContent = `你今天的星座：${currentZodiac}`;
         zodiacImageElement.src = zodiacImage;
 
         // 更新图片函数
