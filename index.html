@@ -17,26 +17,6 @@
         }
         h1 {
             color: #333;
-            margin: 0;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 90%;
-            max-width: 1200px;
-            margin-bottom: 20px;
-        }
-        .zodiac-container {
-            font-size: 0.9em; /* 使字体小于标题 */
-            text-align: right;
-            display: flex;
-            align-items: center;
-        }
-        .zodiac-container img {
-            width: 30px; /* 控制星座图片的大小 */
-            height: 30px;
-            margin-left: 10px;
         }
         .image-container {
             background-color: #fff;
@@ -73,19 +53,20 @@
             font-size: 1.2em;
             margin-bottom: 20px;
         }
+        .zodiac-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .zodiac-container img {
+            width: 100px;
+            height: 100px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>今天的历史、星座和图片</h1>
-
-        <!-- 显示星座 -->
-        <div class="zodiac-container" id="zodiacContainer">
-            <p id="zodiacText"></p>
-            <img id="zodiacImage" src="" alt="星座图片">
-        </div>
-    </div>
+    <h1>今天的历史、星座和图片</h1>
 
     <!-- 显示当前日期 -->
     <div class="date" id="currentDate"></div>
@@ -101,6 +82,13 @@
         <ul id="eventsList">
             <!-- 历史事件将通过JS填充 -->
         </ul>
+    </div>
+
+    <!-- 显示星座 -->
+    <div class="zodiac-container" id="zodiacContainer">
+        <h2>你今天的星座：</h2>
+        <p id="zodiacText"></p>
+        <img id="zodiacImage" src="" alt="星座图片">
     </div>
 
     <script>
