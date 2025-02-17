@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>历史上的今天</title>
+    <title>Today's Historical Events and Zodiac</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,11 +52,16 @@
             font-size: 1.2em;
             margin-bottom: 20px;
         }
+        .chart-container {
+            width: 80%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>历史上的今天</h1>
+    <h1>Today's History, Zodiac, and Image</h1>
 
     <!-- 显示当前日期 -->
     <div class="date" id="currentDate"></div>
@@ -68,10 +73,15 @@
 
     <!-- 显示历史事件 -->
     <div class="history-events" id="historyEvents">
-        <h2>历史上的今天</h2>
+        <h2>Today's Major Historical Events</h2>
         <ul id="eventsList">
             <!-- 历史事件将通过JS填充 -->
         </ul>
+    </div>
+
+    <!-- 星座图表 -->
+    <div class="chart-container">
+        <canvas id="zodiacChart"></canvas>
     </div>
 
     <script>
@@ -85,7 +95,7 @@
 
         // 显示当前日期
         const currentDateElement = document.getElementById('currentDate');
-        currentDateElement.textContent = `今天是: ${formattedDate}`;
+        currentDateElement.textContent = `Today is: ${formattedDate}`;
 
         // 事件数据（示例，添加更多事件）
         const historicalEvents = {
@@ -127,6 +137,65 @@
         const historyImage = document.getElementById('historyImage');
         const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;  // 根据当前时间生成不同的图片
         historyImage.src = randomImageUrl;
+
+        // 星座日期范围（简化版）
+        const zodiacSigns = {
+            "摩羯座": {start: "12-22", end: "01-19"},
+            "水瓶座": {start: "01-20", end: "02-18"},
+            "双鱼座": {start: "02-19", end: "03-20"},
+            "白羊座": {start: "03-21", end: "04-19"},
+            "金牛座": {start: "04-20", end: "05-20"},
+            "双子座": {start: "05-21", end: "06-20"},
+            "巨蟹座": {start: "06-21", end: "07-22"},
+            "狮子座": {start: "07-23", end: "08-22"},
+            "处女座": {start: "08-23", end: "09-22"},
+            "天秤座": {start: "09-23", end: "10-22"},
+            "天蝎座": {start: "10-23", end: "11-21"},
+            "射手座": {start: "11-22", end: "12-21"}
+        };
+
+        // 获取当前日期对应的星座
+        let currentZodiac = "";
+        for (const zodiac in zodiacSigns) {
+            const startDate = zodiacSigns[zodiac].start.split("-");
+            const endDate = zodiacSigns[zodiac].end.split("-");
+            if ((month === parseInt(startDate[0]) && day >= parseInt(startDate[1])) || (month === parseInt(endDate[0]) && day <= parseInt(endDate[1]))) {
+                currentZodiac = zodiac;
+                break;
+            }
+        }
+
+        // 显示星座图表
+        const ctx = document.getElementById('zodiacChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(zodiacSigns),
+                datasets: [{
+                    data: Object.values(zodiacSigns).map((_, index) => (index === Object.keys(zodiacSigns).indexOf(currentZodiac)) ? 100 : 0),
+                    backgroundColor: [
+                        '#FF0000', '#FFA500', '#FFFF00', '#008000', '#0000FF', '#4B0082',
+                        '#EE82EE', '#FFC0CB', '#D3D3D3', '#A52A2A', '#FF6347', '#FF1493'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ": " + tooltipItem.raw + "%";
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
     </script>
 
