@@ -48,11 +48,18 @@
         .history-events li {
             margin: 10px 0;
         }
+        .date {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
     <h1>Today's History and Image</h1>
+
+    <!-- 显示当前日期 -->
+    <div class="date" id="currentDate"></div>
 
     <!-- 显示图片 -->
     <div class="image-container" id="imageContainer">
@@ -72,6 +79,13 @@
         const today = new Date();
         const month = today.getMonth() + 1; // JavaScript月份从0开始，所以加1
         const day = today.getDate();
+
+        // 格式化当前日期
+        const formattedDate = `${today.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+
+        // 显示当前日期
+        const currentDateElement = document.getElementById('currentDate');
+        currentDateElement.textContent = `Today is: ${formattedDate}`;
 
         // 事件数据（示例，添加更多事件）
         const historicalEvents = {
