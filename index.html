@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Popular Images</title>
+    <title>Today's Historical Events</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,120 +18,95 @@
         h1 {
             color: #333;
         }
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .image-item {
+        .image-container {
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            cursor: pointer;
-            /* 容器没有固定宽高，保持原始大小 */
-            max-width: 300px;
-            max-height: 300px;
+            margin-bottom: 20px;
         }
-        .image-item img {
+        .image-container img {
             width: 100%;
-            height: auto; /* 高度根据图片原始比例自适应 */
+            height: auto;
             display: block;
-            object-fit: contain;  /* 保持图片原始比例显示 */
+            object-fit: contain;
         }
-        /* Modal 样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            overflow: auto;
-            justify-content: center;
-            align-items: center;
+        .history-events {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
         }
-        .modal-content {
-            max-width: 90%; /* 最大宽度为90% */
-            max-height: 90%; /* 最大高度为90% */
-            object-fit: contain; /* 保持原图比例 */
+        .history-events h2 {
+            margin-top: 0;
         }
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 25px;
-            color: #fff;
-            font-size: 36px;
-            font-weight: bold;
-            cursor: pointer;
+        .history-events ul {
+            padding-left: 20px;
+        }
+        .history-events li {
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
-    <h1>Popular Images</h1>
-    <div class="image-gallery" id="imageGallery">
-        <!-- 图片列表将通过JavaScript填充 -->
+    <h1>Today's History and Image</h1>
+
+    <!-- 显示图片 -->
+    <div class="image-container" id="imageContainer">
+        <img id="historyImage" src="" alt="History Image">
     </div>
 
-    <!-- Modal -->
-    <div id="myModal" class="modal">
-        <span class="close" id="closeModal">&times;</span>
-        <img class="modal-content" id="modalImage">
+    <!-- 显示历史事件 -->
+    <div class="history-events" id="historyEvents">
+        <h2>Today's Major Historical Events</h2>
+        <ul id="eventsList">
+            <!-- 历史事件将通过JS填充 -->
+        </ul>
     </div>
 
     <script>
-        const imageGallery = document.getElementById('imageGallery');
-        const modal = document.getElementById('myModal');
-        const modalImage = document.getElementById('modalImage');
-        const closeModal = document.getElementById('closeModal');
+        // 获取当前日期
+        const today = new Date();
+        const month = today.getMonth() + 1; // JavaScript月份从0开始，所以加1
+        const day = today.getDate();
 
-        // 获取热门图片的函数
-        function fetchImages() {
-            for (let i = 0; i < 20; i++) {  // 获取20张图片
-                const imageItem = document.createElement('div');
-                imageItem.classList.add('image-item');
-                
-                // 创建图片元素
-                const image = document.createElement('img');
-                const randomImageUrl = `https://picsum.photos/300/200?random=${Math.random()}`;  // 生成随机图片的 URL
-                image.src = randomImageUrl;
-                image.alt = 'Random Image';
+        // 事件数据（示例）
+        const historicalEvents = {
+            "2-17": [
+                "1789年：美国总统乔治·华盛顿宣布第一任总统的职位。",
+                "1965年：美国宇航局发射了第一个成功的气象卫星。",
+                "1996年：美国作曲家约翰·威廉姆斯获得奥斯卡奖最佳原创歌曲奖。",
+            ],
+            "2-18": [
+                "1885年：马克·吐温的小说《哈克贝利·费恩历险记》首次出版。",
+                "1930年：冯·诺伊曼和图灵发明了现代计算机的核心理论。",
+                "1967年：美国《星际迷航》第一季结束。",
+            ],
+            // 可以继续添加更多日期对应的历史事件...
+        };
 
-                // 保存每张图片的 URL（确保大图与小图一致）
-                const originalImageUrl = randomImageUrl.replace('300', '800').replace('200', '600');  // 获取更大尺寸的图片
+        // 根据当前日期获取当天的历史事件
+        const currentDate = `${month}-${day}`;
+        const events = historicalEvents[currentDate] || ["没有记录的历史事件。"];
 
-                // 点击图片时显示原图
-                imageItem.addEventListener('click', () => {
-                    modal.style.display = "flex";
-                    modalImage.src = originalImageUrl;  // 使用保存的原图链接
-                });
-
-                // 将图片添加到图片项中
-                imageItem.appendChild(image);
-
-                // 将图片项添加到图片画廊中
-                imageGallery.appendChild(imageItem);
-            }
-        }
-
-        // 点击关闭按钮时关闭弹窗
-        closeModal.addEventListener('click', () => {
-            modal.style.display = "none";
+        // 填充历史事件
+        const eventsList = document.getElementById('eventsList');
+        eventsList.innerHTML = ''; // 清空原有内容
+        events.forEach(event => {
+            const listItem = document.createElement('li');
+            listItem.textContent = event;
+            eventsList.appendChild(listItem);
         });
 
-        // 点击弹窗外区域时关闭弹窗
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
+        // 每天显示一张图片
+        const imageContainer = document.getElementById('imageContainer');
+        const historyImage = document.getElementById('historyImage');
+        const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;  // 根据当前时间生成不同的图片
+        historyImage.src = randomImageUrl;
 
-        // 页面加载时获取图片
-        window.onload = fetchImages;
     </script>
 
 </body>
