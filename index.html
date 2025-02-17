@@ -30,14 +30,15 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             cursor: pointer;
-            /* 容器宽度固定，图片高度自动根据比例调整 */
+            /* 容器没有固定宽高，保持原始大小 */
             max-width: 300px;
-            max-height: 200px;
+            max-height: 300px;
         }
         .image-item img {
             width: 100%;
             height: auto; /* 高度根据图片原始比例自适应 */
             display: block;
+            object-fit: contain;  /* 保持图片原始比例显示 */
         }
         /* Modal 样式 */
         .modal {
