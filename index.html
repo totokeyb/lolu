@@ -86,8 +86,7 @@
 
     <!-- 显示星座 -->
     <div class="zodiac-container" id="zodiacContainer">
-        <h2>你今天的星座：</h2>
-        <p id="zodiacText"></p>
+                <p id="zodiacText"></p>
         <img id="zodiacImage" src="" alt="星座图片">
     </div>
 
@@ -177,7 +176,7 @@
         // 显示星座信息
         const zodiacText = document.getElementById('zodiacText');
         const zodiacImageElement = document.getElementById('zodiacImage');
-        zodiacText.textContent = `你今天的星座：${currentZodiac}`;
+        zodiacText.textContent = `今天的星座：${currentZodiac}`;
         zodiacImageElement.src = zodiacImage;
 
         // 更新图片函数
