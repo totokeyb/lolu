@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>综合信息展示</title>
+    <title>丰富内容展示</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,9 +19,29 @@
             height: 400px;
             margin: 20px 0;
         }
-        #zodiacText, #historicalEventsText, #lunarText, #baziText {
+        #zodiacText {
             font-size: 1.2em;
             margin: 10px 0;
+        }
+        #dailyQuote {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        #weatherInfo {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        #fortuneText {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        #jokeText {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        #countdownText {
+            font-size: 1.5em;
+            margin: 20px 0;
         }
         #content {
             width: 80%;
@@ -42,14 +62,20 @@
             <img id="zodiacImage" alt="星座图片">
         </div>
 
-        <!-- 历史事件 -->
-        <div id="historicalEventsText"></div>
+        <!-- 每日名言 -->
+        <div id="dailyQuote"></div>
 
-        <!-- 农历日期 -->
-        <div id="lunarText"></div>
+        <!-- 天气信息 -->
+        <div id="weatherInfo"></div>
 
-        <!-- 生辰八字 -->
-        <div id="baziText"></div>
+        <!-- 每日运势 -->
+        <div id="fortuneText"></div>
+
+        <!-- 随机笑话 -->
+        <div id="jokeText"></div>
+
+        <!-- 倒计时 -->
+        <div id="countdownText"></div>
     </div>
 
     <script>
@@ -104,29 +130,60 @@
         zodiacText.textContent = `今天的星座：${currentZodiac}`;
         zodiacImageElement.src = zodiacImage;
 
-        // 预设历史事件数据
-        const historicalEvents = {
-            "02-17": ["1789年：美国总统乔治·华盛顿宣布第一任总统的职位。",
-                    "1965年：美国宇航局发射了第一个成功的气象卫星。",
-                    "1996年：美国作曲家约翰·威廉姆斯获得奥斯卡奖最佳原创歌曲奖。"],
-            "02-18": ["1885年：马克·吐温的小说《哈克贝利·费恩历险记》首次出版。",
-                    "1930年：冯·诺伊曼和图灵发明了现代计算机的核心理论。"]
-        };
+        // 每日名言/格言
+        const dailyQuotes = [
+            "今日事，今日毕。",
+            "成功属于那些勇于冒险的人。",
+            "如果你不敢面对自己，你将无法了解自己。",
+            "别让昨日的失败影响今日的辉煌。",
+            "人只有为自己活着，才配得上活着的生命。"
+        ];
+        const randomQuote = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
+        const dailyQuoteElement = document.getElementById('dailyQuote');
+        dailyQuoteElement.textContent = `"${randomQuote}"`;
 
-        // 获取当天的历史事件
-        const historicalEventsText = document.getElementById('historicalEventsText');
-        const events = historicalEvents[`${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`] || ["今天没有记录的历史事件。"];
-        historicalEventsText.innerHTML = `<strong>历史事件：</strong><ul>${events.map(event => `<li>${event}</li>`).join('')}</ul>`;
+        // 天气信息（示例）
+        const weatherInfoElement = document.getElementById('weatherInfo');
+        weatherInfoElement.textContent = "当前天气：晴，温度 25°C";
 
-        // 简单的农历日期（假设农历是基于某个固定的农历日期规则）
-        const lunarText = document.getElementById('lunarText');
-        lunarText.textContent = `农历日期（假设计算）：农历 ${month}月 ${day}日`;
+        // 每日运势（示例）
+        const fortunes = [
+            "今天你的运势：财运有些波动，要谨慎投资。",
+            "今天你的运势：工作上会遇到挑战，保持冷静。",
+            "今天你的运势：爱情运不错，可以多和伴侣沟通。",
+            "今天你的运势：身体状况良好，适合进行户外活动。"
+        ];
+        const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+        const fortuneTextElement = document.getElementById('fortuneText');
+        fortuneTextElement.textContent = `今日运势：${randomFortune}`;
 
-        // 简化版生辰八字：根据农历年份来推算
-        const baziText = document.getElementById('baziText');
-        const bazi = `生辰八字（简化）：${year - 4}年（甲）${month}月（乙）${day}日（丙）`;
-        baziText.textContent = bazi;
+        // 随机笑话（示例）
+        const jokes = [
+            "有一天，鸭子走进商店，店员问：“你要什么？”鸭子回答：“我就随便看看。”",
+            "为什么鱼不喜欢篮球？因为它怕被打水漂。",
+            "小明：“爸爸，今天放学我做了个好事。” 爸爸：“你做了什么好事？” 小明：“我没做错事。”
+        ];
+        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        const jokeTextElement = document.getElementById('jokeText');
+        jokeTextElement.textContent = `笑话：${randomJoke}`;
 
+        // 倒计时（例如倒计时到新年）
+        const countdownDate = new Date(year + 1, 0, 1);  // 新年倒计时
+        const countdownTextElement = document.getElementById('countdownText');
+        const countdownInterval = setInterval(function() {
+            const now = new Date();
+            const timeDiff = countdownDate - now;
+            if (timeDiff <= 0) {
+                clearInterval(countdownInterval);
+                countdownTextElement.textContent = "新年到了！";
+            } else {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                countdownTextElement.textContent = `距离新年还有 ${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+            }
+        }, 1000);
     </script>
 </body>
 </html>
