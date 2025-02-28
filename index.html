@@ -131,11 +131,14 @@
                 const temperature = weatherDetails[1];  // 温度
                 const humidity = weatherDetails[2];  // 湿度
                 const pressure = weatherDetails[3];  // 气压
-                const wind = weatherDetails[4];  // 风速
+                let wind = weatherDetails[4];  // 风速
+
+                // 去除风速中的单位
+                wind = wind.replace('km/h', '').trim();
 
                 // 风速与风级的对应关系
                 let windLevel = '';
-                const windSpeed = parseInt(wind.replace('km/h', '').trim());
+                const windSpeed = parseInt(wind);
                 if (windSpeed <= 1) windLevel = '0级（静风）';
                 else if (windSpeed <= 5) windLevel = '1级（轻风）';
                 else if (windSpeed <= 11) windLevel = '2级（微风）';
@@ -154,7 +157,7 @@
                     温度：${temperature} <br>
                     湿度：${humidity} <br>
                     气压：${pressure} <br>
-                    风速：${wind} (${windLevel})
+                    风速：${wind} km/h (${windLevel})
                 `;
             })
             .catch(error => {
