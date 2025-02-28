@@ -162,8 +162,20 @@
                 else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
                 else temperatureLevel = '极热天气，注意高温中暑';
 
+                // 处理湿度值
+                const humidityValue = humidity.replace('%', '').trim();  // 去掉百分号
+                const humidityPercent = parseInt(humidityValue);
+
+                // 湿度与天气的对应关系
+                let humidityLevel = '';
+                if (humidityPercent <= 20) humidityLevel = '非常干燥';
+                else if (humidityPercent <= 40) humidityLevel = '干燥';
+                else if (humidityPercent <= 60) humidityLevel = '适宜';
+                else if (humidityPercent <= 80) humidityLevel = '潮湿';
+                else humidityLevel = '非常潮湿';
+
                 // 更新天气信息显示
-                weatherElement.innerHTML = `天气：${weather} <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidity} <br> 风速：${windLevel}`;
+                weatherElement.innerHTML = `天气：${weather} <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidityPercent}%（${humidityLevel}）<br> 风速：${windLevel}`;
             })
             .catch(() => {
                 weatherElement.innerHTML = '无法加载天气信息';
@@ -171,4 +183,3 @@
     </script>
 </body>
 </html>
-
