@@ -37,6 +37,10 @@
             margin: 20px 0;
             cursor: pointer;
         }
+        #weather {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -55,6 +59,9 @@
     <div>
         <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
     </div>
+
+    <!-- 显示天气信息 -->
+    <div id="weather">天气情况：加载中...</div>
 
     <script>
         // 获取当前日期
@@ -107,6 +114,23 @@
 
         // 初始化加载随机图片
         loadNewImage();
+
+        // 获取天气信息
+        const weatherElement = document.getElementById('weather');
+        const city = 'Beijing'; // 城市，可以根据需要更改
+
+        // API URL
+        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t`;
+
+        fetch(weatherApiUrl)
+            .then(response => response.text())
+            .then(data => {
+                weatherElement.textContent = `当前天气：${data}`;
+            })
+            .catch(error => {
+                weatherElement.textContent = '无法获取天气信息';
+                console.error('获取天气信息失败:', error);
+            });
     </script>
 </body>
 </html>
