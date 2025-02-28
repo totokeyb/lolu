@@ -105,22 +105,16 @@
         // 获取天气数据
         async function getWeather() {
             const city = '大连';
-            const url = `https://www.metaweather.com/api/location/search/?query=${city}`;
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=YOUR_API_KEY&units=metric&lang=zh_cn`;
 
             try {
-                // 获取大连的woeid (woeid是MetaWeather用来标识城市的代码)
                 const response = await fetch(url);
-                const data = await response.json();
-                const woeid = data[0].woeid;
+                const weatherData = await response.json();
 
-                // 获取具体天气数据
-                const weatherResponse = await fetch(`https://www.metaweather.com/api/location/${woeid}/`);
-                const weatherData = await weatherResponse.json();
-
-                const temperature = weatherData.consolidated_weather[0].the_temp;
-                const pressure = "N/A";  // MetaWeather没有气压数据
-                const humidity = weatherData.consolidated_weather[0].humidity;
-                const windSpeed = weatherData.consolidated_weather[0].windspeed;
+                const temperature = weatherData.main.temp;
+                const pressure = weatherData.main.pressure;
+                const humidity = weatherData.main.humidity;
+                const windSpeed = weatherData.wind.speed;
 
                 // 风速转化为风力等级和风速描述
                 let windLevel = '';
