@@ -77,18 +77,18 @@
         // 获取星座并显示对应的星座图片
         function getZodiacSign(day, month) {
             const zodiacSigns = [
-                { sign: '摩羯座', start: { month: 12, day: 22 }, end: { month: 1, day: 19 }, img: 'https://img.icons8.com/ios/452/capricorn.png' },
-                { sign: '水瓶座', start: { month: 1, day: 20 }, end: { month: 2, day: 18 }, img: 'https://img.icons8.com/ios/452/aquarius.png' },
-                { sign: '双鱼座', start: { month: 2, day: 19 }, end: { month: 3, day: 20 }, img: 'https://img.icons8.com/ios/452/pisces.png' },
-                { sign: '白羊座', start: { month: 3, day: 21 }, end: { month: 4, day: 19 }, img: 'https://img.icons8.com/ios/452/aries.png' },
-                { sign: '金牛座', start: { month: 4, day: 20 }, end: { month: 5, day: 20 }, img: 'https://img.icons8.com/ios/452/taurus.png' },
-                { sign: '双子座', start: { month: 5, day: 21 }, end: { month: 6, day: 20 }, img: 'https://img.icons8.com/ios/452/gemini.png' },
-                { sign: '巨蟹座', start: { month: 6, day: 21 }, end: { month: 7, day: 22 }, img: 'https://img.icons8.com/ios/452/cancer.png' },
-                { sign: '狮子座', start: { month: 7, day: 23 }, end: { month: 8, day: 22 }, img: 'https://img.icons8.com/ios/452/leo.png' },
-                { sign: '处女座', start: { month: 8, day: 23 }, end: { month: 9, day: 22 }, img: 'https://img.icons8.com/ios/452/virgo.png' },
-                { sign: '天秤座', start: { month: 9, day: 23 }, end: { month: 10, day: 22 }, img: 'https://img.icons8.com/ios/452/libra.png' },
-                { sign: '天蝎座', start: { month: 10, day: 23 }, end: { month: 11, day: 21 }, img: 'https://img.icons8.com/ios/452/scorpio.png' },
-                { sign: '射手座', start: { month: 11, day: 22 }, end: { month: 12, day: 21 }, img: 'https://img.icons8.com/ios/452/sagittarius.png' },
+                { sign: '摩羯座', start: { month: 12, day: 22 }, end: { month: 1, day: 19 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/capricorn.jpg' },
+                { sign: '水瓶座', start: { month: 1, day: 20 }, end: { month: 2, day: 18 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/aquarius.jpg' },
+                { sign: '双鱼座', start: { month: 2, day: 19 }, end: { month: 3, day: 20 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/pisces.jpg' },
+                { sign: '白羊座', start: { month: 3, day: 21 }, end: { month: 4, day: 19 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/aries.jpg' },
+                { sign: '金牛座', start: { month: 4, day: 20 }, end: { month: 5, day: 20 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/taurus.jpg' },
+                { sign: '双子座', start: { month: 5, day: 21 }, end: { month: 6, day: 20 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/gemini.jpg' },
+                { sign: '巨蟹座', start: { month: 6, day: 21 }, end: { month: 7, day: 22 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/cancer.jpg' },
+                { sign: '狮子座', start: { month: 7, day: 23 }, end: { month: 8, day: 22 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/leo.jpg' },
+                { sign: '处女座', start: { month: 8, day: 23 }, end: { month: 9, day: 22 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/virgo.jpg' },
+                { sign: '天秤座', start: { month: 9, day: 23 }, end: { month: 10, day: 22 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/libra.jpg' },
+                { sign: '天蝎座', start: { month: 10, day: 23 }, end: { month: 11, day: 21 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/scorpio.jpg' },
+                { sign: '射手座', start: { month: 11, day: 22 }, end: { month: 12, day: 21 }, img: 'https://www.astrology.com/images/astrology-icons/zodiac-signs/sagittarius.jpg' },
             ];
 
             for (const zodiac of zodiacSigns) {
@@ -111,11 +111,15 @@
 
         // 获取中文笑话
         function getRandomJoke() {
-            fetch('https://api.jokes.one/jod?category=knock-knock')
+            fetch('https://v2.jokeapi.dev/joke/Any?lang=zh')
                 .then(response => response.json())
                 .then(data => {
                     const jokeElement = document.getElementById('joke');
-                    jokeElement.textContent = data.contents.jokes[0].joke.text;
+                    if (data.setup && data.delivery) {
+                        jokeElement.textContent = data.setup + ' ' + data.delivery;
+                    } else {
+                        jokeElement.textContent = data.joke;
+                    }
                 })
                 .catch(error => console.error("获取笑话失败:", error));
         }
