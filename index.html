@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>简化展示</title>
+    <title>今日星座与随机图片</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,9 +11,24 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
-        #currentDate {
-            font-size: 1.5em;
-            margin: 10px 0;
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        #date {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #zodiac {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #zodiac img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-left: 10px;
         }
         #historyImage {
             width: 100%;
@@ -22,93 +37,92 @@
             margin: 20px 0;
             cursor: pointer;
         }
-        #zodiacWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-        #zodiacText {
-            font-size: 1.2em;
-            margin-right: 10px;
-        }
-        #zodiacImage {
-            width: 100px;
-            height: 100px;
+        #joke {
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div id="content">
-        <div id="currentDate"></div>
+    <h1>今日星座与随机图片</h1>
 
-        <!-- 显示星座和星座图片放在同一行 -->
-        <div id="zodiacWrapper">
-            <div id="zodiacText"></div>
-            <img id="zodiacImage" alt="星座图片">
-        </div>
+    <!-- 显示当前日期 -->
+    <div id="date">今天是：<span id="todayDate"></span></div>
 
-        <!-- 随机图片部分 -->
-        <div>
-            <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
-        </div>
+    <!-- 显示星座和星座图片 -->
+    <div id="zodiac">
+        <div id="zodiacSign">星座：<span id="zodiacName"></span></div>
+        <img id="zodiacImage" alt="星座图片">
     </div>
+
+    <!-- 随机图片 -->
+    <div>
+        <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
+    </div>
+
+    <!-- 随机笑话 -->
+    <div id="joke">加载笑话中...</div>
 
     <script>
         // 获取当前日期
         const today = new Date();
-        const month = today.getMonth() + 1;
-        const day = today.getDate();
-        const year = today.getFullYear();
+        const dateElement = document.getElementById('todayDate');
+        const zodiacSignElement = document.getElementById('zodiacName');
+        const zodiacImageElement = document.getElementById('zodiacImage');
+        
+        // 当前日期
+        dateElement.textContent = today.toLocaleDateString();
 
-        // 显示当前日期
-        const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-        const currentDateElement = document.getElementById('currentDate');
-        currentDateElement.textContent = `今天是：${formattedDate}`;
+        // 获取星座并显示对应的星座图片
+        function getZodiacSign(day, month) {
+            const zodiacSigns = [
+                { sign: '摩羯座', start: { month: 12, day: 22 }, end: { month: 1, day: 19 }, img: 'https://example.com/capricorn.png' },
+                { sign: '水瓶座', start: { month: 1, day: 20 }, end: { month: 2, day: 18 }, img: 'https://example.com/aquarius.png' },
+                { sign: '双鱼座', start: { month: 2, day: 19 }, end: { month: 3, day: 20 }, img: 'https://example.com/pisces.png' },
+                { sign: '白羊座', start: { month: 3, day: 21 }, end: { month: 4, day: 19 }, img: 'https://example.com/aries.png' },
+                { sign: '金牛座', start: { month: 4, day: 20 }, end: { month: 5, day: 20 }, img: 'https://example.com/taurus.png' },
+                { sign: '双子座', start: { month: 5, day: 21 }, end: { month: 6, day: 20 }, img: 'https://example.com/gemini.png' },
+                { sign: '巨蟹座', start: { month: 6, day: 21 }, end: { month: 7, day: 22 }, img: 'https://example.com/cancer.png' },
+                { sign: '狮子座', start: { month: 7, day: 23 }, end: { month: 8, day: 22 }, img: 'https://example.com/leo.png' },
+                { sign: '处女座', start: { month: 8, day: 23 }, end: { month: 9, day: 22 }, img: 'https://example.com/virgo.png' },
+                { sign: '天秤座', start: { month: 9, day: 23 }, end: { month: 10, day: 22 }, img: 'https://example.com/libra.png' },
+                { sign: '天蝎座', start: { month: 10, day: 23 }, end: { month: 11, day: 21 }, img: 'https://example.com/scorpio.png' },
+                { sign: '射手座', start: { month: 11, day: 22 }, end: { month: 12, day: 21 }, img: 'https://example.com/sagittarius.png' },
+            ];
 
-        // 每次点击图片时加载新的随机图片
-        const historyImage = document.getElementById('historyImage');
-        const loadNewImage = () => {
-            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
-            historyImage.src = randomImageUrl;
-        }
-        loadNewImage(); // 初始加载图片
-
-        // 星座日期范围（简化版）
-        const zodiacSigns = {
-            "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
-            "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
-            "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
-            "白羊座": {start: "03-21", end: "04-19", image: "https://www.astrology-zodiac-signs.com/images/aries.png"},
-            "金牛座": {start: "04-20", end: "05-20", image: "https://www.astrology-zodiac-signs.com/images/taurus.png"},
-            "双子座": {start: "05-21", end: "06-20", image: "https://www.astrology-zodiac-signs.com/images/gemini.png"},
-            "巨蟹座": {start: "06-21", end: "07-22", image: "https://www.astrology-zodiac-signs.com/images/cancer.png"},
-            "狮子座": {start: "07-23", end: "08-22", image: "https://www.astrology-zodiac-signs.com/images/leo.png"},
-            "处女座": {start: "08-23", end: "09-22", image: "https://www.astrology-zodiac-signs.com/images/virgo.png"},
-            "天秤座": {start: "09-23", end: "10-22", image: "https://www.astrology-zodiac-signs.com/images/libra.png"},
-            "天蝎座": {start: "10-23", end: "11-21", image: "https://www.astrology-zodiac-signs.com/images/scorpio.png"},
-            "射手座": {start: "11-22", end: "12-21", image: "https://www.astrology-zodiac-signs.com/images/sagittarius.png"}
-        };
-
-        // 获取当前日期对应的星座
-        let currentZodiac = "";
-        let zodiacImage = "";
-        for (const zodiac in zodiacSigns) {
-            const startDate = zodiacSigns[zodiac].start.split("-");
-            const endDate = zodiacSigns[zodiac].end.split("-");
-            if ((month === parseInt(startDate[0]) && day >= parseInt(startDate[1])) || (month === parseInt(endDate[0]) && day <= parseInt(endDate[1]))) {
-                currentZodiac = zodiac;
-                zodiacImage = zodiacSigns[zodiac].image;
-                break;
+            for (const zodiac of zodiacSigns) {
+                if ((month === zodiac.start.month && day >= zodiac.start.day) || (month === zodiac.end.month && day <= zodiac.end.day)) {
+                    return zodiac;
+                }
             }
         }
 
-        // 显示星座信息
-        const zodiacText = document.getElementById('zodiacText');
-        const zodiacImageElement = document.getElementById('zodiacImage');
-        zodiacText.textContent = `今天的星座：${currentZodiac}`;
-        zodiacImageElement.src = zodiacImage;
+        const zodiac = getZodiacSign(today.getDate(), today.getMonth() + 1);
+        zodiacSignElement.textContent = zodiac.sign;
+        zodiacImageElement.src = zodiac.img;
 
+        // 随机图片点击加载新图片
+        const historyImage = document.getElementById('historyImage');
+        function loadNewImage() {
+            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
+            historyImage.src = randomImageUrl;
+        }
+
+        // 获取随机笑话
+        function getRandomJoke() {
+            fetch('https://official-joke-api.appspot.com/jokes/random')
+                .then(response => response.json())
+                .then(data => {
+                    const jokeElement = document.getElementById('joke');
+                    jokeElement.textContent = `${data[0].setup} - ${data[0].punchline}`;
+                })
+                .catch(error => console.error("获取笑话失败:", error));
+        }
+
+        // 初始化加载随机笑话和图片
+        getRandomJoke();
+        loadNewImage();
     </script>
 </body>
 </html>
