@@ -117,10 +117,10 @@
 
         // 获取天气信息
         const weatherElement = document.getElementById('weather');
-        const city = 'Beijing'; // 城市，可以根据需要更改
+        const city = 'dalian'; // 城市为大连
 
-        // API URL
-        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t`;
+        // API URL（获取更多详细天气信息）
+        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%w+%h+%p`;
 
         fetch(weatherApiUrl)
             .then(response => response.text())
