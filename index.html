@@ -131,10 +131,11 @@
                 const temperature = weatherDetails[1];  // 温度
                 const humidity = weatherDetails[2];  // 湿度
                 const pressure = weatherDetails[3];  // 气压
-                let wind = weatherDetails[4];  // 风速
+                const wind = weatherDetails[4];  // 风速
 
-                // 使用正则去除风速中的所有非数字字符，包括风向符号
-                wind = wind.replace(/[^\d]/g, '').trim();
+                // 处理温度值
+                const tempValue = temperature.replace(/[^\d-]/g, '').trim();  // 保留数字和负号
+                const temp = parseInt(tempValue);
 
                 // 风速与风级的对应关系
                 let windLevel = '';
@@ -151,20 +152,28 @@
                 else if (windSpeed <= 88) windLevel = '9级（烈风）';
                 else windLevel = '10级及以上（暴风、大暴风等）';
 
-                weatherElement.innerHTML = `
-                    城市：${city} <br>
+                // 气温与气候的对应关系
+                let temperatureLevel = '';
+                if (temp <= -20) temperatureLevel = '极寒天气，极度寒冷';
+                else if (temp <= -10) temperatureLevel = '寒冷天气，冬季寒冷';
+                else if (temp <= 0) temperatureLevel = '较冷天气，寒冷';
+                else if (temp <= 10) temperatureLevel = '凉爽天气，适合外出';
+                else if (temp <= 20) temperatureLevel = '温暖天气，适宜外出';
+                else if (temp <= 25) temperatureLevel = '温和天气，舒适宜人';
+                else if (temp <= 35) temperatureLevel = '炎热天气，夏季高温';
+                else temperatureLevel = '酷热天气，极端炎热';
+
+                // 更新天气信息
+                weatherElement.innerHTML = `城市：${city} <br>
                     天气：${weather} <br>
-                    温度：${temperature} <br>
+                    温度：${temp}°C（${temperatureLevel}）<br>
                     湿度：${humidity} <br>
                     气压：${pressure} <br>
-                    风速：${wind} km/h (${windLevel})
-                `;
+                    风速：${windLevel}`;
             })
             .catch(error => {
                 weatherElement.textContent = '无法获取天气信息';
-                console.error('获取天气信息失败:', error);
             });
     </script>
 </body>
 </html>
-
