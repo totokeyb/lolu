@@ -161,22 +161,15 @@
                 else if (temp <= 10) temperatureLevel = '凉爽天气，适合外出';
                 else if (temp <= 20) temperatureLevel = '温暖天气，适宜外出';
                 else if (temp <= 25) temperatureLevel = '温和天气，舒适宜人';
-                else if (temp <= 35) temperatureLevel = '炎热天气，夏季高温';
-                else temperatureLevel = '酷热天气，极端炎热';
+                else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
+                else temperatureLevel = '极热天气，注意高温中暑';
 
-                // 处理湿度值
-                const humidityValue = humidity.replace(/[^\d]/g, '');  // 去除非数字字符（如 %）
-                const humidityInt = parseInt(humidityValue);
-
-                // 湿度与等级的对应关系
-                let humidityLevel = '';
-                if (humidityInt <= 30) humidityLevel = '干燥，空气较为干燥';
-                else if (humidityInt <= 60) humidityLevel = '适宜，空气湿润';
-                else if (humidityInt <= 85) humidityLevel = '湿润，较为潮湿';
-                else humidityLevel = '湿重，空气湿气重';
-
-                // 更新天气信息
-                weatherElement.innerHTML = `城市：${city} <br>
-                    天气：${weather} <br>
-                    温度：${temp}°C（${temperatureLevel}）<br>
-                   
+                // 更新天气信息显示
+                weatherElement.innerHTML = `天气：${weather} <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidity} <br> 风速：${windLevel}`;
+            })
+            .catch(() => {
+                weatherElement.innerHTML = '无法加载天气信息';
+            });
+    </script>
+</body>
+</html>
