@@ -77,18 +77,18 @@
         // 获取星座并显示对应的星座图片
         function getZodiacSign(day, month) {
             const zodiacSigns = [
-                { sign: '摩羯座', start: { month: 12, day: 22 }, end: { month: 1, day: 19 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Capricorn_Star_Sign.svg/1200px-Capricorn_Star_Sign.svg.png' },
-                { sign: '水瓶座', start: { month: 1, day: 20 }, end: { month: 2, day: 18 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Aquarius_Star_Sign.svg/1200px-Aquarius_Star_Sign.svg.png' },
-                { sign: '双鱼座', start: { month: 2, day: 19 }, end: { month: 3, day: 20 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Pisces_Star_Sign.svg/1200px-Pisces_Star_Sign.svg.png' },
-                { sign: '白羊座', start: { month: 3, day: 21 }, end: { month: 4, day: 19 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Aries_Star_Sign.svg/1200px-Aries_Star_Sign.svg.png' },
-                { sign: '金牛座', start: { month: 4, day: 20 }, end: { month: 5, day: 20 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Taurus_Star_Sign.svg/1200px-Taurus_Star_Sign.svg.png' },
-                { sign: '双子座', start: { month: 5, day: 21 }, end: { month: 6, day: 20 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Gemini_Star_Sign.svg/1200px-Gemini_Star_Sign.svg.png' },
-                { sign: '巨蟹座', start: { month: 6, day: 21 }, end: { month: 7, day: 22 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Cancer_Star_Sign.svg/1200px-Cancer_Star_Sign.svg.png' },
-                { sign: '狮子座', start: { month: 7, day: 23 }, end: { month: 8, day: 22 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Leo_Star_Sign.svg/1200px-Leo_Star_Sign.svg.png' },
-                { sign: '处女座', start: { month: 8, day: 23 }, end: { month: 9, day: 22 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Virgo_Star_Sign.svg/1200px-Virgo_Star_Sign.svg.png' },
-                { sign: '天秤座', start: { month: 9, day: 23 }, end: { month: 10, day: 22 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Libra_Star_Sign.svg/1200px-Libra_Star_Sign.svg.png' },
-                { sign: '天蝎座', start: { month: 10, day: 23 }, end: { month: 11, day: 21 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Scorpio_Star_Sign.svg/1200px-Scorpio_Star_Sign.svg.png' },
-                { sign: '射手座', start: { month: 11, day: 22 }, end: { month: 12, day: 21 }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Sagittarius_Star_Sign.svg/1200px-Sagittarius_Star_Sign.svg.png' },
+                { sign: '摩羯座', start: { month: 12, day: 22 }, end: { month: 1, day: 19 }, img: 'https://img.icons8.com/ios/452/capricorn.png' },
+                { sign: '水瓶座', start: { month: 1, day: 20 }, end: { month: 2, day: 18 }, img: 'https://img.icons8.com/ios/452/aquarius.png' },
+                { sign: '双鱼座', start: { month: 2, day: 19 }, end: { month: 3, day: 20 }, img: 'https://img.icons8.com/ios/452/pisces.png' },
+                { sign: '白羊座', start: { month: 3, day: 21 }, end: { month: 4, day: 19 }, img: 'https://img.icons8.com/ios/452/aries.png' },
+                { sign: '金牛座', start: { month: 4, day: 20 }, end: { month: 5, day: 20 }, img: 'https://img.icons8.com/ios/452/taurus.png' },
+                { sign: '双子座', start: { month: 5, day: 21 }, end: { month: 6, day: 20 }, img: 'https://img.icons8.com/ios/452/gemini.png' },
+                { sign: '巨蟹座', start: { month: 6, day: 21 }, end: { month: 7, day: 22 }, img: 'https://img.icons8.com/ios/452/cancer.png' },
+                { sign: '狮子座', start: { month: 7, day: 23 }, end: { month: 8, day: 22 }, img: 'https://img.icons8.com/ios/452/leo.png' },
+                { sign: '处女座', start: { month: 8, day: 23 }, end: { month: 9, day: 22 }, img: 'https://img.icons8.com/ios/452/virgo.png' },
+                { sign: '天秤座', start: { month: 9, day: 23 }, end: { month: 10, day: 22 }, img: 'https://img.icons8.com/ios/452/libra.png' },
+                { sign: '天蝎座', start: { month: 10, day: 23 }, end: { month: 11, day: 21 }, img: 'https://img.icons8.com/ios/452/scorpio.png' },
+                { sign: '射手座', start: { month: 11, day: 22 }, end: { month: 12, day: 21 }, img: 'https://img.icons8.com/ios/452/sagittarius.png' },
             ];
 
             for (const zodiac of zodiacSigns) {
@@ -109,13 +109,13 @@
             historyImage.src = randomImageUrl;
         }
 
-        // 获取随机笑话
+        // 获取中文笑话
         function getRandomJoke() {
-            fetch('https://v2.jokeapi.dev/joke/Any?type=single')
+            fetch('https://api.jokes.one/jod?category=knock-knock')
                 .then(response => response.json())
                 .then(data => {
                     const jokeElement = document.getElementById('joke');
-                    jokeElement.textContent = data.joke;
+                    jokeElement.textContent = data.contents.jokes[0].joke.text;
                 })
                 .catch(error => console.error("获取笑话失败:", error));
         }
