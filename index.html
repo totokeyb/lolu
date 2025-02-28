@@ -133,8 +133,8 @@
                 const pressure = weatherDetails[3];  // 气压
                 let wind = weatherDetails[4];  // 风速
 
-                // 去除风速中的单位
-                wind = wind.replace('km/h', '').trim();
+                // 使用正则去除风速中的所有非数字字符，包括风向符号
+                wind = wind.replace(/[^\d]/g, '').trim();
 
                 // 风速与风级的对应关系
                 let windLevel = '';
@@ -167,3 +167,4 @@
     </script>
 </body>
 </html>
+
