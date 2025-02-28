@@ -120,7 +120,7 @@
         const city = '大连'; // 城市为大连
 
         // 使用wttr.in获取天气数据
-        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%p+%w`;
+        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%w`;
 
         fetch(weatherApiUrl)
             .then(response => response.text())
@@ -130,8 +130,7 @@
                 const weather = weatherDetails[0];  // 天气描述
                 const temperature = weatherDetails[1];  // 温度
                 const humidity = weatherDetails[2];  // 湿度
-                const pressure = weatherDetails[3];  // 气压
-                const wind = weatherDetails[4];  // 风速
+                const wind = weatherDetails[3];  // 风速
 
                 // 处理温度值
                 const tempValue = temperature.replace(/[^\d-]/g, '').trim();  // 保留数字和负号
@@ -168,7 +167,6 @@
                     天气：${weather} <br>
                     温度：${temp}°C（${temperatureLevel}）<br>
                     湿度：${humidity} <br>
-                    气压：${pressure} <br>
                     风速：${windLevel}`;
             })
             .catch(error => {
