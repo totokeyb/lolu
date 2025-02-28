@@ -165,11 +165,22 @@
                 else if (temp <= 35) temperatureLevel = '炎热天气，夏季高温';
                 else temperatureLevel = '酷热天气，极端炎热';
 
+                // 处理湿度值
+                const humidityValue = humidity.replace(/[^\d]/g, '');  // 去除非数字字符（如 %）
+                const humidityInt = parseInt(humidityValue);
+
+                // 湿度与等级的对应关系
+                let humidityLevel = '';
+                if (humidityInt <= 30) humidityLevel = '干燥，空气较为干燥';
+                else if (humidityInt <= 60) humidityLevel = '适宜，空气湿润';
+                else if (humidityInt <= 85) humidityLevel = '湿润，较为潮湿';
+                else humidityLevel = '湿重，空气湿气重';
+
                 // 更新天气信息
                 weatherElement.innerHTML = `城市：${city} <br>
                     天气：${weather} <br>
                     温度：${temp}°C（${temperatureLevel}）<br>
-                    湿度：${humidity} <br>
+                    湿度：${humidityInt}%（${humidityLevel}）<br>
                     风速：${windValue} km/h (${windLevel})`;
             })
             .catch(error => {
