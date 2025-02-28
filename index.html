@@ -113,43 +113,25 @@
             historyImage.src = randomImageUrl;
         }
 
-        // 静态中文笑话数组（备用）
-        const fallbackJokes = [
-            "为什么程序员总是喜欢暗模式？因为灯灭了他们也能看见代码。",
-            "小明的妈妈问他：‘今天老师教了什么？’ 小明说：‘老师说1+1=2。’ 妈妈说：‘那你学到了什么？’ 小明说：‘我学会了老师会数数！’",
-            "为什么宇航员和他的女朋友分手了？因为他需要空间。",
-            "老板问员工：‘你为什么总是迟到？’ 员工回答：‘因为我喜欢给生活留点悬念。’",
-            "为什么鸡蛋总是那么安静？因为它怕被打碎了出声。"
-        ];
-
-        // 获取随机笑话（使用JokeAPI并尝试中文支持）
-        function getRandomJoke() {
-            const jokeElement = document.getElementById('joke');
-            fetch('https://v2.jokeapi.dev/joke/Any?lang=en') // JokeAPI默认英文，可通过提交中文笑话扩展
+        // 获取笑话（从 JokeAPI 获取，简化请求）
+        function getJoke() {
+            fetch('https://v2.jokeapi.dev/joke/Any?lang=zh')
                 .then(response => response.json())
                 .then(data => {
-                    if (data.error) {
-                        throw new Error('API返回错误');
-                    }
-                    let jokeText;
-                    if (data.type === 'single') {
-                        jokeText = data.joke;
+                    if (data.joke) {
+                        document.getElementById('joke').textContent = data.joke;
                     } else {
-                        jokeText = `${data.setup} ${data.delivery}`;
+                        document.getElementById('joke').textContent = '获取笑话失败，请重试';
                     }
-                    // 这里我们暂时用英文笑话，实际可替换为中文API或翻译
-                    jokeElement.textContent = jokeText; // 如需中文，可手动翻译或使用翻译API
                 })
                 .catch(error => {
-                    console.error("获取笑话失败:", error);
-                    // 使用备用静态笑话
-                    const randomIndex = Math.floor(Math.random() * fallbackJokes.length);
-                    jokeElement.textContent = fallbackJokes[randomIndex];
+                    console.error('获取笑话时出错：', error);
+                    document.getElementById('joke').textContent = '笑话加载失败，请重试';
                 });
         }
 
         // 初始化加载随机笑话和图片
-        getRandomJoke();
+        getJoke();
         loadNewImage();
     </script>
 </body>
