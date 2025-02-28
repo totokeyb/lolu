@@ -133,10 +133,12 @@
                 const pressure = weatherDetails[3];  // 气压
                 const wind = weatherDetails[4];  // 风速
 
+                // 提取风速数值并判断风力等级
+                const windSpeedMatch = wind.match(/(\d+\.?\d*)/);  // 提取风速数字
+                const windSpeed = windSpeedMatch ? parseFloat(windSpeedMatch[1]) : 0;  // 获取风速数值
+                
                 // 根据风速判断风力等级
                 let windLevel = '';
-                const windSpeed = parseFloat(wind);  // 风速值
-
                 if (windSpeed >= 0 && windSpeed <= 1) {
                     windLevel = '无风';
                 } else if (windSpeed >= 1 && windSpeed <= 5) {
@@ -157,7 +159,7 @@
                     温度：${temperature} <br>
                     湿度：${humidity} <br>
                     气压：${pressure} <br>
-                    风速：${wind} km/h (${windLevel})
+                    风速：${windSpeed} km/h (${windLevel})
                 `;
             })
             .catch(error => {
