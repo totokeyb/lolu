@@ -170,7 +170,7 @@
                     天气：${weather} <br>
                     温度：${temp}°C（${temperatureLevel}）<br>
                     湿度：${humidity} <br>
-                    风速：${windLevel}`;
+                    风速：${windValue} km/h (${windLevel})`;
             })
             .catch(error => {
                 weatherElement.textContent = '无法获取天气信息';
