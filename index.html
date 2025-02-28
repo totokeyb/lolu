@@ -69,7 +69,7 @@
         // 每次点击图片时加载新的随机图片
         const historyImage = document.getElementById('historyImage');
         const loadNewImage = () => {
-            const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;
+            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
             historyImage.src = randomImageUrl;
         }
         loadNewImage(); // 初始加载图片
