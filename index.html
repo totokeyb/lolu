@@ -46,12 +46,11 @@
 <body>
     <h1>Today is 今天</h1>
 
-    <!-- 显示当前日期 -->
-    <div id="date">今天是：<span id="todayDate"></span></div>
+    <!-- 合并第2行和第3行 -->
+    <div id="date">今天是：<span id="todayDate"></span> | 星座：<span id="zodiacName"></span></div>
 
-    <!-- 显示星座和星座图片 -->
+    <!-- 显示星座图片 -->
     <div id="zodiac">
-        <div id="zodiacSign">星座：<span id="zodiacName"></span></div>
         <img id="zodiacImage" alt="星座图片">
     </div>
 
@@ -180,12 +179,4 @@
                 weatherElement.innerHTML = `城市：${city} <br>
                     天气：${weather} <br>
                     温度：${temp}°C（${temperatureLevel}）<br>
-                    湿度：${humidityInt}%（${humidityLevel}）<br>
-                    风速：${windValue} km/h (${windLevel})`;
-            })
-            .catch(error => {
-                weatherElement.textContent = '无法获取天气信息';
-            });
-    </script>
-</body>
-</html>
+                   
