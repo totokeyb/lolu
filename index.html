@@ -16,9 +16,11 @@
             margin: 10px 0;
         }
         #historyImage, #zodiacImage {
-            width: 600px;
-            height: 400px;
+            width: 100%;
+            max-width: 600px;
+            height: auto;
             margin: 20px 0;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -27,7 +29,7 @@
         <div id="currentDate"></div>
 
         <div>
-            <img id="historyImage" alt="随机图片">
+            <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
         </div>
 
         <div id="zodiacText"></div>
@@ -50,8 +52,11 @@
 
         // 每天显示一张随机图片
         const historyImage = document.getElementById('historyImage');
-        const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;
-        historyImage.src = randomImageUrl;
+        const loadNewImage = () => {
+            const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;
+            historyImage.src = randomImageUrl;
+        }
+        loadNewImage(); // 初始加载图片
 
         // 星座日期范围（简化版）
         const zodiacSigns = {
