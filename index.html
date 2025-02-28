@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,72 +9,64 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f4f4f9;
         }
-        h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-        #date {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        #zodiac {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .weather-info {
             margin-top: 20px;
         }
-        #zodiac img {
-            width: 50px;
-            height: 50px;
-            margin-left: 10px;
+        .weather-info p {
+            font-size: 18px;
         }
-        #historyImage {
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-            margin: 20px 0;
+        .weather-info .temp {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        img {
+            width: 100px;
+            height: 100px;
+        }
+        .random-image {
             cursor: pointer;
-        }
-        #weather {
-            margin-top: 20px;
-            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
+
     <h1>Today is 今天</h1>
 
-    <!-- 显示当前日期 -->
-    <div id="date">今天是：<span id="todayDate"></span></div>
+    <div id="date"></div>
 
-    <!-- 显示星座和星座图片 -->
-    <div id="zodiac">
-        <div id="zodiacSign">星座：<span id="zodiacName"></span></div>
-        <img id="zodiacImage" alt="星座图片">
-    </div>
-
-    <!-- 随机图片 -->
+    <!-- 星座图片和星座 -->
     <div>
-        <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
+        <h2>星座</h2>
+        <img id="zodiac-image" src="" alt="星座图片" />
+        <div id="zodiac-sign"></div>
     </div>
 
-    <!-- 显示天气信息 -->
-    <div id="weather">天气情况：加载中...</div>
+    <div class="random-image" id="random-image">
+        <h3>点击换随机图片</h3>
+        <img id="image" src="https://picsum.photos/200/300" alt="随机图片" />
+    </div>
+
+    <!-- 显示天气 -->
+    <div class="weather-info" id="weather-info">
+        <h2>天气情况（大连）</h2>
+        <p id="temperature"></p>
+        <p id="pressure"></p>
+        <p id="humidity"></p>
+        <p id="wind-speed"></p>
+    </div>
 
     <script>
         // 获取当前日期
-        const today = new Date();
-        const dateElement = document.getElementById('todayDate');
-        const zodiacSignElement = document.getElementById('zodiacName');
-        const zodiacImageElement = document.getElementById('zodiacImage');
-        
-        // 当前日期
-        dateElement.textContent = today.toLocaleDateString();
+        const currentDate = new Date();
+        const day = currentDate.getDate();
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+        document.getElementById('date').innerText = `${year}年${month}月${day}日`;
 
-        // 星座和图片信息
-        const zodiacImages = {
+        // 星座相关内容
+        const zodiacSigns = {
             "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
             "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
             "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
@@ -89,63 +81,84 @@
             "射手座": {start: "11-22", end: "12-21", image: "https://www.astrology-zodiac-signs.com/images/sagittarius.png"}
         };
 
-        // 获取星座
-        function getZodiacSign(day, month) {
-            for (const [sign, {start, end, image}] of Object.entries(zodiacImages)) {
-                const [startMonth, startDay] = start.split("-").map(Number);
-                const [endMonth, endDay] = end.split("-").map(Number);
+        const zodiacDates = Object.values(zodiacSigns);
+        const currentMonthDay = `${month}-${day}`;
 
-                if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
-                    return { sign, image };
+        // 获取星座并显示对应图片
+        function getZodiac() {
+            for (let sign in zodiacSigns) {
+                const { start, end } = zodiacSigns[sign];
+                if ((currentMonthDay >= start && currentMonthDay <= end) || (currentMonthDay >= start || currentMonthDay <= end)) {
+                    document.getElementById('zodiac-image').src = zodiacSigns[sign].image;
+                    document.getElementById('zodiac-sign').innerText = sign;
+                    break;
                 }
             }
         }
+        getZodiac();
 
-        const zodiac = getZodiacSign(today.getDate(), today.getMonth() + 1);
-        zodiacSignElement.textContent = zodiac.sign;
-        zodiacImageElement.src = zodiac.image;
-
-        // 随机图片点击加载新图片
-        const historyImage = document.getElementById('historyImage');
-        function loadNewImage() {
-            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
-            historyImage.src = randomImageUrl;
+        // 随机图片切换
+        document.getElementById('random-image').onclick = function() {
+            document.getElementById('image').src = "https://picsum.photos/200/300?" + new Date().getTime(); // 防止缓存
         }
 
-        // 初始化加载随机图片
-        loadNewImage();
+        // 获取天气数据
+        async function getWeather() {
+            const city = '大连';
+            const url = `https://www.metaweather.com/api/location/search/?query=${city}`;
 
-        // 获取天气信息
-        const weatherElement = document.getElementById('weather');
-        const city = '大连'; // 城市为大连
+            try {
+                // 获取大连的woeid (woeid是MetaWeather用来标识城市的代码)
+                const response = await fetch(url);
+                const data = await response.json();
+                const woeid = data[0].woeid;
 
-        // 使用wttr.in获取天气数据
-        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%p+%w`;
+                // 获取具体天气数据
+                const weatherResponse = await fetch(`https://www.metaweather.com/api/location/${woeid}/`);
+                const weatherData = await weatherResponse.json();
 
-        fetch(weatherApiUrl)
-            .then(response => response.text())
-            .then(data => {
-                // 格式化并显示天气信息
-                const weatherDetails = data.split(" ");
-                const weather = weatherDetails[0];  // 天气描述
-                const temperature = weatherDetails[1];  // 温度
-                const humidity = weatherDetails[2];  // 湿度
-                const pressure = weatherDetails[3];  // 气压
-                const wind = weatherDetails[4];  // 风速
+                const temperature = weatherData.consolidated_weather[0].the_temp;
+                const pressure = "N/A";  // MetaWeather没有气压数据
+                const humidity = weatherData.consolidated_weather[0].humidity;
+                const windSpeed = weatherData.consolidated_weather[0].windspeed;
 
-                weatherElement.innerHTML = `
-                    城市：${city} <br>
-                    天气：${weather} <br>
-                    温度：${temperature} <br>
-                    湿度：${humidity} <br>
-                    气压：${pressure} <br>
-                    风速：${wind}
-                `;
-            })
-            .catch(error => {
-                weatherElement.textContent = '无法获取天气信息';
-                console.error('获取天气信息失败:', error);
-            });
+                // 风速转化为风力等级和风速描述
+                let windLevel = '';
+                let windDescription = '';
+                if (windSpeed <= 1) {
+                    windLevel = '0级';
+                    windDescription = '静风';
+                } else if (windSpeed <= 5) {
+                    windLevel = '1级';
+                    windDescription = '轻风';
+                } else if (windSpeed <= 11) {
+                    windLevel = '2级';
+                    windDescription = '微风';
+                } else if (windSpeed <= 19) {
+                    windLevel = '3级';
+                    windDescription = '和风';
+                } else if (windSpeed <= 28) {
+                    windLevel = '4级';
+                    windDescription = '清风';
+                } else if (windSpeed <= 38) {
+                    windLevel = '5级';
+                    windDescription = '强风';
+                } else {
+                    windLevel = '6级及以上';
+                    windDescription = '大风';
+                }
+
+                // 显示天气信息
+                document.getElementById('temperature').innerText = `温度: ${temperature}°C`;
+                document.getElementById('pressure').innerText = `气压: ${pressure} hPa`;
+                document.getElementById('humidity').innerText = `湿度: ${humidity}%`;
+                document.getElementById('wind-speed').innerText = `风速: ${windSpeed} km/h (${windLevel} - ${windDescription})`;
+            } catch (error) {
+                console.error('获取天气数据失败', error);
+            }
+        }
+        getWeather();
     </script>
+
 </body>
 </html>
