@@ -22,6 +22,11 @@
             margin: 20px 0;
             cursor: pointer;
         }
+        #zodiacImage {
+            width: 100px;  /* 设置星座图片的大小为 100x100 */
+            height: 100px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -50,7 +55,7 @@
         const currentDateElement = document.getElementById('currentDate');
         currentDateElement.textContent = `今天是：${formattedDate}`;
 
-        // 每天显示一张随机图片
+        // 每次点击图片时加载新的随机图片
         const historyImage = document.getElementById('historyImage');
         const loadNewImage = () => {
             const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;
