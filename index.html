@@ -108,7 +108,7 @@
         // 随机图片点击加载新图片
         const historyImage = document.getElementById('historyImage');
         function loadNewImage() {
-            const randomImageUrl = https://picsum.photos/600/400?random=${new Date().getTime()};
+            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
             historyImage.src = randomImageUrl;
         }
 
@@ -120,7 +120,7 @@
         const city = '大连'; // 城市为大连
 
         // 使用wttr.in获取天气数据
-        const weatherApiUrl = https://wttr.in/${city}?format=%C+%t+%h+%p+%w;
+        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%p+%w`;
 
         fetch(weatherApiUrl)
             .then(response => response.text())
@@ -133,14 +133,14 @@
                 const pressure = weatherDetails[3];  // 气压
                 const wind = weatherDetails[4];  // 风速
 
-                weatherElement.innerHTML = 
+                weatherElement.innerHTML = `
                     城市：${city} <br>
                     天气：${weather} <br>
                     温度：${temperature} <br>
                     湿度：${humidity} <br>
                     气压：${pressure} <br>
                     风速：${wind}
-                ;
+                `;
             })
             .catch(error => {
                 weatherElement.textContent = '无法获取天气信息';
