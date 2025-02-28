@@ -113,22 +113,23 @@
             historyImage.src = randomImageUrl;
         }
 
-        // 获取中文笑话（使用新的API源）
+        // 获取中文笑话（使用新的API）
         function getRandomJoke() {
-            fetch('https://api.vvhan.com/api/mxjoke')
+            fetch('https://v2.api-m.com/api/xh')
                 .then(response => response.json())
                 .then(data => {
                     const jokeElement = document.getElementById('joke');
                     if (data && data.data) {
+                        // 这个API返回的字段是 'data'，直接使用
                         jokeElement.textContent = data.data;
                     } else {
-                        jokeElement.textContent = "未能获取笑话。";
+                        jokeElement.textContent = "未能获取笑话，请稍后重试。";
                     }
                 })
                 .catch(error => {
                     console.error("获取笑话失败:", error);
                     const jokeElement = document.getElementById('joke');
-                    jokeElement.textContent = "笑话加载失败。";
+                    jokeElement.textContent = "笑话加载失败，请检查网络。";
                 });
         }
 
