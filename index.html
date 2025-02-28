@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>今日星座与随机图片</title>
+    <title>Today is 今天</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,8 +26,8 @@
             margin-top: 20px;
         }
         #zodiac img {
-            max-width: 100px;
-            max-height: 100px;
+            width: 50px;
+            height: 50px;
             margin-left: 10px;
         }
         #historyImage {
@@ -37,15 +37,10 @@
             margin: 20px 0;
             cursor: pointer;
         }
-        #joke {
-            font-size: 1.5em;
-            margin: 20px 0;
-            color: #333;
-        }
     </style>
 </head>
 <body>
-    <h1>今日星座与随机图片</h1>
+    <h1>Today is 今天</h1>
 
     <!-- 显示当前日期 -->
     <div id="date">今天是：<span id="todayDate"></span></div>
@@ -60,9 +55,6 @@
     <div>
         <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
     </div>
-
-    <!-- 随机笑话 -->
-    <div id="joke">加载笑话中...</div>
 
     <script>
         // 获取当前日期
@@ -113,25 +105,7 @@
             historyImage.src = randomImageUrl;
         }
 
-        // 获取笑话（从 JokeAPI 获取，简化请求）
-        function getJoke() {
-            fetch('https://v2.jokeapi.dev/joke/Any?lang=zh')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.joke) {
-                        document.getElementById('joke').textContent = data.joke;
-                    } else {
-                        document.getElementById('joke').textContent = '获取笑话失败，请重试';
-                    }
-                })
-                .catch(error => {
-                    console.error('获取笑话时出错：', error);
-                    document.getElementById('joke').textContent = '笑话加载失败，请重试';
-                });
-        }
-
-        // 初始化加载随机笑话和图片
-        getJoke();
+        // 初始化加载随机图片
         loadNewImage();
     </script>
 </body>
