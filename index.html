@@ -132,24 +132,27 @@
                 const humidity = weatherDetails[2];  // 湿度
                 const wind = weatherDetails[3];  // 风速
 
-                // 处理温度值
-                const tempValue = temperature.replace(/[^\d-]/g, '').trim();  // 保留数字和负号
-                const temp = parseInt(tempValue);
+                // 处理风速值，排除非数字字符
+                const windSpeed = wind.replace(/[^\d.]/g, '');  // 只保留数字和小数点
+                const windValue = parseFloat(windSpeed);
 
                 // 风速与风级的对应关系
                 let windLevel = '';
-                const windSpeed = parseInt(wind);
-                if (windSpeed <= 1) windLevel = '0级（静风）';
-                else if (windSpeed <= 5) windLevel = '1级（轻风）';
-                else if (windSpeed <= 11) windLevel = '2级（微风）';
-                else if (windSpeed <= 19) windLevel = '3级（和风）';
-                else if (windSpeed <= 28) windLevel = '4级（清风）';
-                else if (windSpeed <= 38) windLevel = '5级（强风）';
-                else if (windSpeed <= 49) windLevel = '6级（很强的风）';
-                else if (windSpeed <= 61) windLevel = '7级（强风）';
-                else if (windSpeed <= 74) windLevel = '8级（疾风）';
-                else if (windSpeed <= 88) windLevel = '9级（烈风）';
+                if (windValue <= 1) windLevel = '0级（静风）';
+                else if (windValue <= 5) windLevel = '1级（轻风）';
+                else if (windValue <= 11) windLevel = '2级（微风）';
+                else if (windValue <= 19) windLevel = '3级（和风）';
+                else if (windValue <= 28) windLevel = '4级（清风）';
+                else if (windValue <= 38) windLevel = '5级（强风）';
+                else if (windValue <= 49) windLevel = '6级（很强的风）';
+                else if (windValue <= 61) windLevel = '7级（强风）';
+                else if (windValue <= 74) windLevel = '8级（疾风）';
+                else if (windValue <= 88) windLevel = '9级（烈风）';
                 else windLevel = '10级及以上（暴风、大暴风等）';
+
+                // 处理温度值
+                const tempValue = temperature.replace(/[^\d-]/g, '').trim();  // 保留数字和负号
+                const temp = parseInt(tempValue);
 
                 // 气温与气候的对应关系
                 let temperatureLevel = '';
