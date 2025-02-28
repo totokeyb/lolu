@@ -74,33 +74,37 @@
         // 当前日期
         dateElement.textContent = today.toLocaleDateString();
 
-        // 获取星座并显示对应的星座图片
-        function getZodiacSign(day, month) {
-            const zodiacSigns = [
-                { sign: '摩羯座', start: { month: 12, day: 22 }, end: { month: 1, day: 19 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_capricorn.png' },
-                { sign: '水瓶座', start: { month: 1, day: 20 }, end: { month: 2, day: 18 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_aquarius.png' },
-                { sign: '双鱼座', start: { month: 2, day: 19 }, end: { month: 3, day: 20 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_pisces.png' },
-                { sign: '白羊座', start: { month: 3, day: 21 }, end: { month: 4, day: 19 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_aries.png' },
-                { sign: '金牛座', start: { month: 4, day: 20 }, end: { month: 5, day: 20 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_taurus.png' },
-                { sign: '双子座', start: { month: 5, day: 21 }, end: { month: 6, day: 20 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_gemini.png' },
-                { sign: '巨蟹座', start: { month: 6, day: 21 }, end: { month: 7, day: 22 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_cancer.png' },
-                { sign: '狮子座', start: { month: 7, day: 23 }, end: { month: 8, day: 22 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_leo.png' },
-                { sign: '处女座', start: { month: 8, day: 23 }, end: { month: 9, day: 22 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_virgo.png' },
-                { sign: '天秤座', start: { month: 9, day: 23 }, end: { month: 10, day: 22 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_libra.png' },
-                { sign: '天蝎座', start: { month: 10, day: 23 }, end: { month: 11, day: 21 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_scorpio.png' },
-                { sign: '射手座', start: { month: 11, day: 22 }, end: { month: 12, day: 21 }, img: 'https://www.astrology.com/images-us/astrology/astrology_chart/symbols/astrology_sagittarius.png' },
-            ];
+        // 星座和图片信息
+        const zodiacImages = {
+            "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
+            "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
+            "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
+            "白羊座": {start: "03-21", end: "04-19", image: "https://www.astrology-zodiac-signs.com/images/aries.png"},
+            "金牛座": {start: "04-20", end: "05-20", image: "https://www.astrology-zodiac-signs.com/images/taurus.png"},
+            "双子座": {start: "05-21", end: "06-20", image: "https://www.astrology-zodiac-signs.com/images/gemini.png"},
+            "巨蟹座": {start: "06-21", end: "07-22", image: "https://www.astrology-zodiac-signs.com/images/cancer.png"},
+            "狮子座": {start: "07-23", end: "08-22", image: "https://www.astrology-zodiac-signs.com/images/leo.png"},
+            "处女座": {start: "08-23", end: "09-22", image: "https://www.astrology-zodiac-signs.com/images/virgo.png"},
+            "天秤座": {start: "09-23", end: "10-22", image: "https://www.astrology-zodiac-signs.com/images/libra.png"},
+            "天蝎座": {start: "10-23", end: "11-21", image: "https://www.astrology-zodiac-signs.com/images/scorpio.png"},
+            "射手座": {start: "11-22", end: "12-21", image: "https://www.astrology-zodiac-signs.com/images/sagittarius.png"}
+        };
 
-            for (const zodiac of zodiacSigns) {
-                if ((month === zodiac.start.month && day >= zodiac.start.day) || (month === zodiac.end.month && day <= zodiac.end.day)) {
-                    return zodiac;
+        // 获取星座
+        function getZodiacSign(day, month) {
+            for (const [sign, {start, end, image}] of Object.entries(zodiacImages)) {
+                const [startMonth, startDay] = start.split("-").map(Number);
+                const [endMonth, endDay] = end.split("-").map(Number);
+
+                if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
+                    return { sign, image };
                 }
             }
         }
 
         const zodiac = getZodiacSign(today.getDate(), today.getMonth() + 1);
         zodiacSignElement.textContent = zodiac.sign;
-        zodiacImageElement.src = zodiac.img;
+        zodiacImageElement.src = zodiac.image;
 
         // 随机图片点击加载新图片
         const historyImage = document.getElementById('historyImage');
@@ -111,7 +115,7 @@
 
         // 获取中文笑话
         function getRandomJoke() {
-            fetch('https://v2.jokeapi.dev/joke/Programming?lang=zh&format=json')
+            fetch('https://v2.jokeapi.dev/joke/Any?lang=zh&format=json')
                 .then(response => response.json())
                 .then(data => {
                     const jokeElement = document.getElementById('joke');
