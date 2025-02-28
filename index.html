@@ -15,17 +15,26 @@
             font-size: 1.5em;
             margin: 10px 0;
         }
-        #historyImage, #zodiacImage {
+        #historyImage {
             width: 100%;
             max-width: 600px;
             height: auto;
             margin: 20px 0;
             cursor: pointer;
         }
-        #zodiacImage {
-            width: 100px;  /* 设置星座图片的大小为 100x100 */
-            height: 100px;
+        #zodiacWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-top: 20px;
+        }
+        #zodiacText {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+        #zodiacImage {
+            width: 100px;
+            height: 100px;
         }
     </style>
 </head>
@@ -33,13 +42,15 @@
     <div id="content">
         <div id="currentDate"></div>
 
-        <div>
-            <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
+        <!-- 显示星座和星座图片放在同一行 -->
+        <div id="zodiacWrapper">
+            <div id="zodiacText"></div>
+            <img id="zodiacImage" alt="星座图片">
         </div>
 
-        <div id="zodiacText"></div>
+        <!-- 随机图片部分 -->
         <div>
-            <img id="zodiacImage" alt="星座图片">
+            <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
         </div>
     </div>
 
