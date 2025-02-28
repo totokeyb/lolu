@@ -3,133 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>历史事件与星座</title>
+    <title>综合信息展示</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
-        }
-
-        .container {
             text-align: center;
             padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
         }
-
         #currentDate {
-            font-size: 24px;
-            margin-bottom: 20px;
+            font-size: 1.5em;
+            margin: 10px 0;
         }
-
-        #eventsList {
-            margin-top: 20px;
-            list-style-type: none;
-            padding: 0;
+        #historyImage, #zodiacImage {
+            width: 600px;
+            height: 400px;
+            margin: 20px 0;
         }
-
-        #eventsList li {
-            margin-bottom: 10px;
+        #zodiacText, #historicalEventsText, #lunarText, #baziText {
+            font-size: 1.2em;
+            margin: 10px 0;
         }
-
-        #historyImage {
-            margin-top: 20px;
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        #zodiacText {
-            margin-top: 20px;
-            font-size: 20px;
-        }
-
-        #zodiacImage {
-            margin-top: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        #content {
+            width: 80%;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="content">
         <div id="currentDate"></div>
 
-        <ul id="eventsList">
-            <!-- 历史事件列表会填充在这里 -->
-        </ul>
-
-        <div id="imageContainer">
-            <img id="historyImage" alt="随机历史图片">
+        <div>
+            <img id="historyImage" alt="随机图片">
         </div>
 
         <div id="zodiacText"></div>
-        <img id="zodiacImage" alt="星座图标">
+        <div>
+            <img id="zodiacImage" alt="星座图片">
+        </div>
+
+        <!-- 历史事件 -->
+        <div id="historicalEventsText"></div>
+
+        <!-- 农历日期 -->
+        <div id="lunarText"></div>
+
+        <!-- 生辰八字 -->
+        <div id="baziText"></div>
     </div>
 
     <script>
         // 获取当前日期
         const today = new Date();
-        const month = today.getMonth() + 1; // JavaScript月份从0开始，所以加1
-        const day = today.getDate(); // 获取当前日
-
-        // 格式化当前日期，确保日期是两位数格式
-        const formattedDate = `${today.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const year = today.getFullYear();
 
         // 显示当前日期
+        const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
         const currentDateElement = document.getElementById('currentDate');
         currentDateElement.textContent = `今天是：${formattedDate}`;
 
-        // 格式化为 MM-DD 以便与 historicalEvents 的键匹配
-        const currentDateKey = `${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-
-        // 事件数据（示例，添加更多事件）
-        const historicalEvents = {
-            "02-17": [
-                "1789年：美国总统乔治·华盛顿宣布第一任总统的职位。",
-                "1965年：美国宇航局发射了第一个成功的气象卫星。",
-                "1996年：美国作曲家约翰·威廉姆斯获得奥斯卡奖最佳原创歌曲奖。",
-                "2003年：英国首相托尼·布莱尔开始为入侵伊拉克战争辩护。",
-                "1959年：美国总统艾森豪威尔与苏联领导人赫鲁晓夫举行会谈。",
-                "1967年：美国《星际迷航》第一季结束。",
-                "1904年：波兰音乐家肖邦的第一部钢琴协奏曲首次公演。",
-            ],
-            "02-18": [
-                "1885年：马克·吐温的小说《哈克贝利·费恩历险记》首次出版。",
-                "1930年：冯·诺伊曼和图灵发明了现代计算机的核心理论。",
-                "1967年：美国《星际迷航》第一季结束。",
-                "1919年：国际联盟成立。",
-                "1965年：美国发射了阿波罗1号航天器。",
-                "1929年：美国的第一座高楼大厦，帝国大厦完工。",
-            ],
-            // 你可以继续添加更多日期对应的历史事件...
-        };
-
-        // 根据当前日期获取当天的历史事件
-        const events = historicalEvents[currentDateKey] || ["没有记录的历史事件。"];
-
-        // 填充历史事件
-        const eventsList = document.getElementById('eventsList');
-        eventsList.innerHTML = ''; // 清空原有内容
-        events.forEach(event => {
-            const listItem = document.createElement('li');
-            listItem.textContent = event;
-            eventsList.appendChild(listItem);
-        });
-
-        // 每天显示一张图片
-        const imageContainer = document.getElementById('imageContainer');
+        // 每天显示一张随机图片
         const historyImage = document.getElementById('historyImage');
-        const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`; // 根据当前时间生成不同的图片
+        const randomImageUrl = `https://picsum.photos/600/400?random=${today.getTime()}`;
         historyImage.src = randomImageUrl;
 
         // 星座日期范围（简化版）
@@ -167,10 +104,29 @@
         zodiacText.textContent = `今天的星座：${currentZodiac}`;
         zodiacImageElement.src = zodiacImage;
 
-        // 更新图片函数
-        function updateImage() {
-            const newRandomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
-            historyImage.src = newRandomImageUrl;
-        }
+        // 预设历史事件数据
+        const historicalEvents = {
+            "02-17": ["1789年：美国总统乔治·华盛顿宣布第一任总统的职位。",
+                    "1965年：美国宇航局发射了第一个成功的气象卫星。",
+                    "1996年：美国作曲家约翰·威廉姆斯获得奥斯卡奖最佳原创歌曲奖。"],
+            "02-18": ["1885年：马克·吐温的小说《哈克贝利·费恩历险记》首次出版。",
+                    "1930年：冯·诺伊曼和图灵发明了现代计算机的核心理论。"]
+        };
+
+        // 获取当天的历史事件
+        const historicalEventsText = document.getElementById('historicalEventsText');
+        const events = historicalEvents[`${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`] || ["今天没有记录的历史事件。"];
+        historicalEventsText.innerHTML = `<strong>历史事件：</strong><ul>${events.map(event => `<li>${event}</li>`).join('')}</ul>`;
+
+        // 简单的农历日期（假设农历是基于某个固定的农历日期规则）
+        const lunarText = document.getElementById('lunarText');
+        lunarText.textContent = `农历日期（假设计算）：农历 ${month}月 ${day}日`;
+
+        // 简化版生辰八字：根据农历年份来推算
+        const baziText = document.getElementById('baziText');
+        const bazi = `生辰八字（简化）：${year - 4}年（甲）${month}月（乙）${day}日（丙）`;
+        baziText.textContent = bazi;
+
     </script>
 </body>
+</html>
