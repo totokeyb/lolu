@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f5f5f5; /* 默认背景保持灰白 */
             transition: background-color 0.5s;
         }
         h1 {
@@ -27,56 +27,209 @@
             margin: 20px 0;
             cursor: pointer;
         }
+        #weather img {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        #zodiacImage {
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Today is 今天</h1>
-    <div id="date">今天是：<span id="todayDate"></span></div>
+
+    <div id="date">今天是：<span id="todayDate"></span> | 星座：<span id="zodiacName"></span>
+    <img id="zodiacImage" alt="星座图片">
+    </div>
+
     <div id="time">当前时间：<span id="currentTime"></span></div>
+
     <div id="quote">每日名言：<span id="quoteText">加载中...</span></div>
+
     <div>
         <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
     </div>
+
     <div id="weather">天气情况：加载中...</div>
+
     <script>
-        document.getElementById('todayDate').textContent = new Date().toLocaleDateString();
-        
+        // 日期和星座
+        const today = new Date();
+        const dateElement = document.getElementById('todayDate');
+        const zodiacSignElement = document.getElementById('zodiacName');
+        const zodiacImageElement = document.getElementById('zodiacImage');
+        dateElement.textContent = today.toLocaleDateString();
+
+        const zodiacImages = {
+            "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
+            "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
+            "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
+            "白羊座": {start: "03-21", end: "04-19", image: "https://www.astrology-zodiac-signs.com/images/aries.png"},
+            "金牛座": {start: "04-20", end: "05-20", image: "https://www.astrology-zodiac-signs.com/images/taurus.png"},
+            "双子座": {start: "05-21", end: "06-20", image: "https://www.astrology-zodiac-signs.com/images/gemini.png"},
+            "巨蟹座": {start: "06-21", end: "07-22", image: "https://www.astrology-zodiac-signs.com/images/cancer.png"},
+            "狮子座": {start: "07-23", end: "08-22", image: "https://www.astrology-zodiac-signs.com/images/leo.png"},
+            "处女座": {start: "08-23", end: "09-22", image: "https://www.astrology-zodiac-signs.com/images/virgo.png"},
+            "天秤座": {start: "09-23", end: "10-22", image: "https://www.astrology-zodiac-signs.com/images/libra.png"},
+            "天蝎座": {start: "10-23", end: "11-21", image: "https://www.astrology-zodiac-signs.com/images/scorpio.png"},
+            "射手座": {start: "11-22", end: "12-21", image: "https://www.astrology-zodiac-signs.com/images/sagittarius.png"}
+        };
+
+        function getZodiacSign(day, month) {
+            for (const [sign, {start, end, image}] of Object.entries(zodiacImages)) {
+                const [startMonth, startDay] = start.split("-").map(Number);
+                const [endMonth, endDay] = end.split("-").map(Number);
+                if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
+                    return { sign, image };
+                }
+            }
+        }
+
+        const zodiac = getZodiacSign(today.getDate(), today.getMonth() + 1);
+        zodiacSignElement.textContent = zodiac.sign;
+        zodiacImageElement.src = zodiac.image;
+
+        // 实时时间
         function updateTime() {
             document.getElementById('currentTime').textContent = new Date().toLocaleTimeString();
         }
         setInterval(updateTime, 1000);
         updateTime();
-        
+
+        // 每日名言
         const quotes = [
             "成功的秘诀在于始终坚持自己的目标。——托马斯·爱迪生",
             "生活不是等待风暴过去，而是学会在雨中起舞。——维维安·格林",
-            "你今天的努力，是为了明天不必后悔。——佚名"
+            "你今天的努力，是为了明天不必后悔。——佚名",
+            "最伟大的荣耀不在于永不跌倒，而在于每次跌倒后都能站起来。——纳尔逊·曼德拉",
+            "相信自己，你能做到比你想象的更多。——玛丽·凯·阿什",
+            "不要因为害怕失败而不敢开始，失败是成功之母。——中文谚语",
+            "人生最大的冒险，就是不去冒险。——约翰·C·马克斯韦尔",
+            "每一次努力都是一颗种子，终有一天会开花结果。——佚名",
+            "幸福不是你拥有多少，而是你感恩多少。——奥普拉·温弗瑞",
+            "时间是最好的老师，但遗憾的是，它总在最后才教给我们最重要的一课。——卡尔·桑德堡"
         ];
-        document.getElementById('quoteText').textContent = quotes[Math.floor(Math.random() * quotes.length)];
-        
+
+        function getRandomQuote() {
+            let usedQuotes = JSON.parse(localStorage.getItem('usedQuotes')) || [];
+            let availableQuotes = quotes.filter(q => !usedQuotes.includes(q));
+
+            if (availableQuotes.length === 0) {
+                usedQuotes = [];
+                availableQuotes = quotes.slice();
+            }
+
+            const quote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
+            usedQuotes.push(quote);
+            localStorage.setItem('usedQuotes', JSON.stringify(usedQuotes));
+            return quote;
+        }
+
+        document.getElementById('quoteText').textContent = getRandomQuote();
+
+        // 随机图片
+        const historyImage = document.getElementById('historyImage');
         function loadNewImage() {
-            document.getElementById('historyImage').src = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
+            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
+            historyImage.src = randomImageUrl;
         }
         loadNewImage();
-        
-        function fetchWeather() {
-            const apiKey = "pnkLnOxSEamxLrHDWB1bfw==AbazRJeZmgWiYv1x";
-            const city = "大连";
-            fetch(`https://api.api-ninjas.com/v1/weather?city=${city}`, {
-                headers: { 'X-Api-Key': apiKey }
-            })
-            .then(response => response.json())
+
+        // 天气信息
+        const weatherElement = document.getElementById('weather');
+        const city = '大连';
+        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%w+%d`;
+
+        fetch(weatherApiUrl)
+            .then(response => response.text())
             .then(data => {
-                if (data && data.temp) {
-                    document.getElementById('weather').textContent = `天气情况：${data.temp}°C，湿度：${data.humidity}%`;
-                } else {
-                    document.getElementById('weather').textContent = "天气数据获取失败";
-                }
+                const weatherMatch = data.match(/(\S+)\s+([+-]?\d+°C)\s+(\d+%)\s+([↑↓←→↗↘↙↖]\d+km\/h)/);
+                if (!weatherMatch) throw new Error("数据格式不匹配");
+
+                const weather = weatherMatch[1];
+                const temperature = weatherMatch[2];
+                const humidity = weatherMatch[3];
+                const windWithDirection = weatherMatch[4];
+                const windSymbol = windWithDirection.match(/[↑↓←→↗↘↙↖]/)[0];
+                const windSpeed = windWithDirection.replace(/[^0-9.]/g, '');
+                const windValue = parseFloat(windSpeed);
+
+                let windLevel = '';
+                if (windValue <= 1) windLevel = '0级（静风）';
+                else if (windValue <= 5) windLevel = '1级（轻风）';
+                else if (windValue <= 11) windLevel = '2级（微风）';
+                else if (windValue <= 19) windLevel = '3级（和风）';
+                else if (windValue <= 28) windLevel = '4级（清风）';
+                else if (windValue <= 38) windLevel = '5级（强风）';
+                else if (windValue <= 49) windLevel = '6级（很强的风）';
+                else if (windValue <= 61) windLevel = '7级（强风）';
+                else if (windValue <= 74) windLevel = '8级（疾风）';
+                else if (windValue <= 88) windLevel = '9级（烈风）';
+                else windLevel = '10级及以上（暴风、大暴风等）';
+
+                const tempValue = temperature.replace(/[^\d-]/g, '').trim();
+                const temp = parseInt(tempValue);
+                let temperatureLevel = '';
+                if (temp <= -20) temperatureLevel = '极寒天气，极度寒冷';
+                else if (temp <= -10) temperatureLevel = '寒冷天气，冬季寒冷';
+                else if (temp <= 0) temperatureLevel = '较冷天气，寒冷';
+                else if (temp <= 10) temperatureLevel = '凉爽天气，适合外出';
+                else if (temp <= 20) temperatureLevel = '温暖天气，适宜外出';
+                else if (temp <= 25) temperatureLevel = '温和天气，舒适宜人';
+                else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
+                else temperatureLevel = '极热天气，注意高温中暑';
+
+                const humidityValue = humidity.replace('%', '').trim();
+                const humidityPercent = parseInt(humidityValue);
+                let humidityLevel = '';
+                if (humidityPercent <= 20) humidityLevel = '非常干燥';
+                else if (humidityPercent <= 40) humidityLevel = '干燥';
+                else if (humidityPercent <= 60) humidityLevel = '适宜';
+                else if (humidityPercent <= 80) humidityLevel = '潮湿';
+                else humidityLevel = '非常潮湿';
+
+                const weatherIcons = {
+                    '晴': 'https://img.icons8.com/color/48/000000/sun.png',
+                    '晴天': 'https://img.icons8.com/color/48/000000/sun.png',
+                    '多云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
+                    '阴': 'https://img.icons8.com/color/48/000000/cloud.png',
+                    '雨': 'https://img.icons8.com/color/48/000000/rain.png',
+                    '雪': 'https://img.icons8.com/color/48/000000/snow.png'
+                };
+                const weatherIcon = weatherIcons[weather] || 'https://img.icons8.com/color/48/000000/question-mark.png';
+
+                weatherElement.innerHTML = `天气：${weather} <img src="${weatherIcon}" alt="${weather}"> <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidityPercent}%（${humidityLevel}）<br> 风速：${windSymbol} ${windLevel}`;
             })
-            .catch(() => document.getElementById('weather').textContent = "天气数据获取失败");
+            .catch(error => {
+                console.error("天气数据加载失败:", error);
+                weatherElement.innerHTML = '无法加载天气信息';
+            });
+
+        // 背景颜色切换（绑定到星座图片）
+        const backgroundColors = [
+            '#e0f7fa', // 浅蓝（第一次点击）
+            '#f1e0ff', // 浅紫
+            '#ffebee', // 浅红
+            '#e8f5e9', // 浅绿
+            '#fff3e0', // 浅橙
+            '#e0f2f1', // 青色
+            '#f3e5f5', // 淡粉
+            '#f5f5f5'  // 灰白（放在最后）
+        ];
+        let colorIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundColor = backgroundColors[colorIndex];
+            colorIndex = (colorIndex + 1) % backgroundColors.length;
         }
-        fetchWeather();
+
+        zodiacImageElement.onclick = changeBackground;
     </script>
 </body>
 </html>
-
