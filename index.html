@@ -153,12 +153,13 @@
         }
         loadNewImage();
 
-        // 使用 Worker URL 获取天气信息
+        // 使用 OpenWeatherMap 获取天气信息
         const weatherElement = document.getElementById('weather');
         const city = 'Dalian';
-        const workerUrl = 'https://term-1293.waitingkey.workers.dev/';  // 替换为你的 Worker URL
+        const apiKey = 'ba3455276dd9552eac873e694f03d87f'; // 替换为你的 OpenWeatherMap API 密钥
+        const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-        fetch(workerUrl + `?city=${city}`)
+        fetch(weatherApiUrl)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`请求失败，状态码: ${response.status}`);
@@ -170,13 +171,123 @@
                 if (!data.main || !data.weather) throw new Error("数据不完整");
 
                 const temp = data.main.temp;
-                const weatherDescription = data.weather[0].description;
+                const humidity = data.main.humidity;
+                const windSpeed = data.wind.speed;
+                const windDeg = data.wind.deg; // 风向（角度）
+                const cloudiness = data.clouds.all;
+                const feelsLike = data.main.feels_like;
+                const pressure = data.main.pressure;
+                const visibility = data.visibility / 1000; // 转换为公里
+                const rain = data.rain ? data.rain['1h'] || 0 : 0; // 过去1小时降雨量，默认0
+                const weatherMain = data.weather[0].main; // 主要天气类型
+                const weatherDescription = data.weather[0].description; // 详细天气描述
 
-                weatherElement.innerHTML = `当前温度：${temp}°C，天气：${weatherDescription}`;
+                let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
+                let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
+                const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
+                let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
+                let cloudDescription = cloudiness <= 20 ? '晴' : cloudiness <= 50 ? '少云' : cloudiness <= 80 ? '多云' : '阴';
+
+                // 风向计算
+                let windDirection = '';
+                if (windDeg >= 337.5 || windDeg < 22.5) windDirection = '北风';
+                else if (windDeg >= 22.5 && windDeg < 67.5) windDirection = '东北风';
+                else if (windDeg >= 67.5 && windDeg < 112.5) windDirection = '东风';
+                else if (windDeg >= 112.5 && windDeg < 157.5) windDirection = '东南风';
+                else if (windDeg >= 157.5 && windDeg < 202.5) windDirection = '南风';
+                else if (windDeg >= 202.5 && windDeg < 247.5) windDirection = '西南风';
+                else if (windDeg >= 247.5 && windDeg < 292.5) windDirection = '西风';
+                else if (windDeg >= 292.5 && windDeg < 337.5) windDirection = '西北风';
+
+                // 天气描述翻译成中文
+                const weatherTranslations = {
+                    'clear sky': '晴空',
+                    'few clouds': '少云',
+                    'scattered clouds': '疏云',
+                    'broken clouds': '多云',
+                    'overcast clouds': '阴天',
+                    'light rain': '小雨',
+                    'moderate rain': '中雨',
+                    'heavy intensity rain': '大雨',
+                    'shower rain': '阵雨',
+                    'rain': '雨',
+                    'thunderstorm': '雷雨',
+                    'snow': '雪',
+                    'light snow': '小雪',
+                    'heavy snow': '大雪',
+                    'mist': '薄雾',
+                    'fog': '雾',
+                    'haze': '霾',
+                    'smoke': '烟雾',
+                    'dust': '沙尘',
+                    'sand': '沙暴',
+                    'ash': '火山灰',
+                    'squall': '狂风',
+                    'tornado': '龙卷风'
+                };
+
+                // 根据 weatherMain 和 weatherDescription 选择图标
+                const weatherIcons = {
+                    '晴空': 'https://img.icons8.com/color/48/000000/sun.png', // 晴
+                    '少云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 少云
+                    '疏云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 散云
+                    '多云': 'https://img.icons8.com/color/48/000000/cloud.png', // 多云
+                    '阴天': 'https://img.icons8.com/color/48/000000/cloud.png', // 阴
+                    '小雨': 'https://img.icons8.com/color/48/000000/light-rain.png', // 小雨
+                    '中雨': 'https://img.icons8.com/color/48/000000/rain.png', // 中雨
+                    '大雨': 'https://img.icons8.com/color/48/000000/heavy-rain.png', // 大雨
+                    '阵雨': 'https://img.icons8.com/color/48/000000/rain.png', // 阵雨
+                    '雨': 'https://img.icons8.com/color/48/000000/rain.png', // 雨
+                    '雷雨': 'https://img.icons8.com/color/48/000000/storm.png', // 雷雨
+                    '雪': 'https://img.icons8.com/color/48/000000/snow.png', // 雪
+                    '小雪': 'https://img.icons8.com/color/48/000000/snow.png', // 小雪
+                    '大雪': 'https://img.icons8.com/color/48/000000/snow-storm.png', // 大雪
+                    '薄雾': 'https://img.icons8.com/color/48/000000/fog.png', // 薄雾
+                    '雾': 'https://img.icons8.com/color/48/000000/fog.png', // 雾
+                    '霾': 'https://img.icons8.com/color/48/000000/haze.png', // 霾
+                    '烟雾': 'https://img.icons8.com/color/48/000000/smoke.png', // 烟雾
+                    '沙尘': 'https://img.icons8.com/color/48/000000/dust.png', // 沙尘
+                    '沙暴': 'https://img.icons8.com/color/48/000000/dust.png', // 沙暴
+                    '火山灰': 'https://img.icons8.com/color/48/000000/dust.png', // 火山灰
+                    '狂风': 'https://img.icons8.com/color/48/000000/wind.png', // 狂风
+                    '龙卷风': 'https://img.icons8.com/color/48/000000/tornado.png' // 龙卷风
+                };
+
+                // 获取中文天气描述
+                const translatedWeather = weatherTranslations[weatherDescription.toLowerCase()] || weatherTranslations[weatherMain.toLowerCase()] || '未知天气';
+                let weatherIcon = weatherIcons[translatedWeather] || 'https://img.icons8.com/color/48/000000/question-mark.png';
+
+                weatherElement.innerHTML = `
+                    天气：${translatedWeather} <img src="${weatherIcon}" alt="${translatedWeather}"><br>
+                    气温：${temp}°C（${temperatureLevel}）<br>
+                    体感温度：${feelsLike}°C<br>
+                    湿度：${humidity}%（${humidityLevel}）<br>
+                    风速：${windSpeedKmh} km/h（${windLevel}）<br>
+                    风向：${windDirection} (${windDeg}°)<br>
+                    云量：${cloudiness}%<br>
+                    气压：${pressure} hPa<br>
+                    能见度：${visibility} km<br>
+                    降雨量（过去1小时）：${rain} mm
+                `;
             })
             .catch(error => {
-                weatherElement.innerHTML = `天气信息加载失败：${error.message}`;
+                console.error("天气加载失败:", error);
+                weatherElement.innerHTML = `无法加载天气信息：${error.message}`;
             });
+
+        // 背景颜色切换
+        const backgroundColors = [
+            '#e0f7fa', '#f1e0ff', '#ffebee', '#e8f5e9', '#fff3e0', '#e0f2f1', '#f3e5f5', '#f5f5f5'
+        ];
+        let colorIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundColor = backgroundColors[colorIndex];
+            console.log("背景颜色切换为:", backgroundColors[colorIndex]);
+            colorIndex = (colorIndex + 1) % backgroundColors.length;
+        }
+
+        zodiacImageElement.addEventListener('click', changeBackground);
     </script>
 </body>
 </html>
