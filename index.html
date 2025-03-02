@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f5f5f5; /* 默认背景保持灰白 */
+            background-color: #f5f5f5;
             transition: background-color 0.5s;
         }
         h1 {
@@ -140,73 +140,35 @@
                 historyImage.src = 'https://via.placeholder.com/600x400?text=图片加载失败';
             };
         }
-        loadNewImage(); // 初始加载图片
+        loadNewImage();
 
-        // 使用 API Ninjas 获取天气信息
+        // 使用 OpenWeatherMap 获取天气信息
         const weatherElement = document.getElementById('weather');
         const city = 'Dalian';
-        const apiKey = 'pnkLnOxSEamxLrHDWB1bfw==AbazRJeZmgWiYv1x';
-        const weatherApiUrl = `https://api.api-ninjas.com/v1/weather?city=${city}`;
+        const apiKey = 'ba3455276dd9552eac873e694f03d87f'; // 替换为你的 OpenWeatherMap API 密钥
+        const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-        fetch(weatherApiUrl, {
-            method: 'GET',
-            headers: {
-                'X-Api-Key': apiKey
-            }
-        })
+        fetch(weatherApiUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`天气数据请求失败，状态码: ${response.status}`);
+                    throw new Error(`请求失败，状态码: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log("天气数据:", data); // 调试用，查看返回的数据
-                if (!data.temp || !data.humidity || !data.wind_speed || !data.cloud_pct) {
-                    throw new Error("天气数据不完整");
-                }
+                console.log("天气数据:", data);
+                if (!data.main || !data.weather) throw new Error("数据不完整");
 
-                const temp = data.temp;
-                const humidity = data.humidity;
-                const windSpeed = data.wind_speed;
-                const cloudiness = data.cloud_pct;
+                const temp = data.main.temp;
+                const humidity = data.main.humidity;
+                const windSpeed = data.wind.speed;
+                const cloudiness = data.clouds.all;
 
-                let temperatureLevel = '';
-                if (temp <= -20) temperatureLevel = '极寒天气，极度寒冷';
-                else if (temp <= -10) temperatureLevel = '寒冷天气，冬季寒冷';
-                else if (temp <= 0) temperatureLevel = '较冷天气，寒冷';
-                else if (temp <= 10) temperatureLevel = '凉爽天气，适合外出';
-                else if (temp <= 20) temperatureLevel = '温暖天气，适宜外出';
-                else if (temp <= 25) temperatureLevel = '温和天气，舒适宜人';
-                else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
-                else temperatureLevel = '极热天气，注意高温中暑';
-
-                let humidityLevel = '';
-                if (humidity <= 20) humidityLevel = '非常干燥';
-                else if (humidity <= 40) humidityLevel = '干燥';
-                else if (humidity <= 60) humidityLevel = '适宜';
-                else if (humidity <= 80) humidityLevel = '潮湿';
-                else humidityLevel = '非常潮湿';
-
+                let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
+                let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
                 const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
-                let windLevel = '';
-                if (windSpeedKmh <= 1) windLevel = '0级（静风）';
-                else if (windSpeedKmh <= 5) windLevel = '1级（轻风）';
-                else if (windSpeedKmh <= 11) windLevel = '2级（微风）';
-                else if (windSpeedKmh <= 19) windLevel = '3级（和风）';
-                else if (windSpeedKmh <= 28) windLevel = '4级（清风）';
-                else if (windSpeedKmh <= 38) windLevel = '5级（强风）';
-                else if (windSpeedKmh <= 49) windLevel = '6级（很强的风）';
-                else if (windSpeedKmh <= 61) windLevel = '7级（强风）';
-                else if (windSpeedKmh <= 74) windLevel = '8级（疾风）';
-                else if (windSpeedKmh <= 88) windLevel = '9级（烈风）';
-                else windLevel = '10级及以上（暴风、大暴风等）';
-
-                let cloudDescription = '';
-                if (cloudiness <= 20) cloudDescription = '晴';
-                else if (cloudiness <= 50) cloudDescription = '少云';
-                else if (cloudiness <= 80) cloudDescription = '多云';
-                else cloudDescription = '阴';
+                let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
+                let cloudDescription = cloudiness <= 20 ? '晴' : cloudiness <= 50 ? '少云' : cloudiness <= 80 ? '多云' : '阴';
 
                 const weatherIcons = {
                     '晴': 'https://img.icons8.com/color/48/000000/sun.png',
@@ -219,30 +181,23 @@
                 weatherElement.innerHTML = `天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"> <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidity}%（${humidityLevel}）<br> 风速：${windSpeedKmh} km/h（${windLevel}）`;
             })
             .catch(error => {
-                console.error("天气数据加载失败:", error);
-                weatherElement.innerHTML = '无法加载天气信息，请检查网络或API密钥';
+                console.error("天气加载失败:", error);
+                weatherElement.innerHTML = `无法加载天气信息：${error.message}`;
             });
 
         // 背景颜色切换
         const backgroundColors = [
-            '#e0f7fa', // 浅蓝
-            '#f1e0ff', // 浅紫
-            '#ffebee', // 浅红
-            '#e8f5e9', // 浅绿
-            '#fff3e0', // 浅橙
-            '#e0f2f1', // 青色
-            '#f3e5f5', // 淡粉
-            '#f5f5f5'  // 灰白
+            '#e0f7fa', '#f1e0ff', '#ffebee', '#e8f5e9', '#fff3e0', '#e0f2f1', '#f3e5f5', '#f5f5f5'
         ];
         let colorIndex = 0;
 
         function changeBackground() {
             document.body.style.backgroundColor = backgroundColors[colorIndex];
-            console.log("背景颜色切换为:", backgroundColors[colorIndex]); // 调试用
+            console.log("背景颜色切换为:", backgroundColors[colorIndex]);
             colorIndex = (colorIndex + 1) % backgroundColors.length;
         }
 
-        zodiacImageElement.addEventListener('click', changeBackground); // 使用 addEventListener 确保事件绑定
+        zodiacImageElement.addEventListener('click', changeBackground);
     </script>
 </body>
 </html>
