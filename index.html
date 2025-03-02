@@ -162,6 +162,7 @@
                 const temp = data.main.temp;
                 const humidity = data.main.humidity;
                 const windSpeed = data.wind.speed;
+                const windDeg = data.wind.deg; // 风向（角度）
                 const cloudiness = data.clouds.all;
                 const feelsLike = data.main.feels_like;
                 const pressure = data.main.pressure;
@@ -173,6 +174,17 @@
                 const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
                 let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
                 let cloudDescription = cloudiness <= 20 ? '晴' : cloudiness <= 50 ? '少云' : cloudiness <= 80 ? '多云' : '阴';
+                
+                // 风向计算
+                let windDirection = '';
+                if (windDeg >= 337.5 || windDeg < 22.5) windDirection = '北风';
+                else if (windDeg >= 22.5 && windDeg < 67.5) windDirection = '东北风';
+                else if (windDeg >= 67.5 && windDeg < 112.5) windDirection = '东风';
+                else if (windDeg >= 112.5 && windDeg < 157.5) windDirection = '东南风';
+                else if (windDeg >= 157.5 && windDeg < 202.5) windDirection = '南风';
+                else if (windDeg >= 202.5 && windDeg < 247.5) windDirection = '西南风';
+                else if (windDeg >= 247.5 && windDeg < 292.5) windDirection = '西风';
+                else if (windDeg >= 292.5 && windDeg < 337.5) windDirection = '西北风';
 
                 const weatherIcons = {
                     '晴': 'https://img.icons8.com/color/48/000000/sun.png',
@@ -188,6 +200,7 @@
                     体感温度：${feelsLike}°C<br>
                     湿度：${humidity}%（${humidityLevel}）<br>
                     风速：${windSpeedKmh} km/h（${windLevel}）<br>
+                    风向：${windDirection} (${windDeg}°)<br>
                     云量：${cloudiness}%<br>
                     气压：${pressure} hPa<br>
                     能见度：${visibility} km<br>
