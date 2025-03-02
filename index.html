@@ -116,8 +116,8 @@
         const weatherElement = document.getElementById('weather');
         const city = '大连'; // 城市为大连
 
-        // 使用wttr.in获取天气数据
-        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%w`;
+        // 使用wttr.in获取天气数据，添加 %d 表示风向
+        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%w+%d`;
 
         fetch(weatherApiUrl)
             .then(response => response.text())
@@ -128,6 +128,7 @@
                 const temperature = weatherDetails[1];  // 温度
                 const humidity = weatherDetails[2];  // 湿度
                 const wind = weatherDetails[3];  // 风速
+                const windDirection = weatherDetails[4];  // 风向 (例如 "N", "NE", "E")
 
                 // 处理风速值，排除非数字字符
                 const windSpeed = wind.replace(/[^\d.]/g, '');  // 只保留数字和小数点
@@ -174,8 +175,31 @@
                 else if (humidityPercent <= 80) humidityLevel = '潮湿';
                 else humidityLevel = '非常潮湿';
 
-                // 更新天气信息显示
-                weatherElement.innerHTML = `天气：${weather} <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidityPercent}%（${humidityLevel}）<br> 风速：${windLevel}`;
+                // 风向符号映射
+                const windDirectionSymbols = {
+                    'N': '↑',   // 北
+                    'NNE': '↗', // 东北偏北
+                    'NE': '↗',  // 东北
+                    'ENE': '↗', // 东北偏东
+                    'E': '→',   // 东
+                    'ESE': '↘', // 东南偏东
+                    'SE': '↘',  // 东南
+                    'SSE': '↘', // 东南偏南
+                    'S': '↓',   // 南
+                    'SSW': '↙', // 西南偏南
+                    'SW': '↙',  // 西南
+                    'WSW': '↙', // 西南偏西
+                    'W': '←',   // 西
+                    'WNW': '↖', // 西北偏西
+                    'NW': '↖',  // 西北
+                    'NNW': '↖'  // 西北偏北
+                };
+
+                // 获取风向符号，默认为 "?" 如果未识别
+                const windSymbol = windDirectionSymbols[windDirection] || '?';
+
+                // 更新天气信息显示，添加风向符号
+                weatherElement.innerHTML = `天气：${weather} <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidityPercent}%（${humidityLevel}）<br> 风速：${windSymbol} ${windLevel}`;
             })
             .catch(() => {
                 weatherElement.innerHTML = '无法加载天气信息';
