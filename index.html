@@ -46,31 +46,24 @@
 <body>
     <h1>Today is 今天</h1>
 
-    <!-- 合并第2行和第3行 -->
     <div id="date">今天是：<span id="todayDate"></span> | 星座：<span id="zodiacName"></span>
-    <!-- 显示星座图片 -->
     <img id="zodiacImage" alt="星座图片" style="width: 50px; height: 50px; margin-left: 10px;">
     </div>
 
-    <!-- 随机图片 -->
     <div>
         <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
     </div>
 
-    <!-- 显示天气信息 -->
     <div id="weather">天气情况：加载中...</div>
 
     <script>
-        // 获取当前日期
         const today = new Date();
         const dateElement = document.getElementById('todayDate');
         const zodiacSignElement = document.getElementById('zodiacName');
         const zodiacImageElement = document.getElementById('zodiacImage');
         
-        // 当前日期
         dateElement.textContent = today.toLocaleDateString();
 
-        // 星座和图片信息
         const zodiacImages = {
             "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
             "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
@@ -86,12 +79,10 @@
             "射手座": {start: "11-22", end: "12-21", image: "https://www.astrology-zodiac-signs.com/images/sagittarius.png"}
         };
 
-        // 获取星座
         function getZodiacSign(day, month) {
             for (const [sign, {start, end, image}] of Object.entries(zodiacImages)) {
                 const [startMonth, startDay] = start.split("-").map(Number);
                 const [endMonth, endDay] = end.split("-").map(Number);
-
                 if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
                     return { sign, image };
                 }
@@ -102,39 +93,39 @@
         zodiacSignElement.textContent = zodiac.sign;
         zodiacImageElement.src = zodiac.image;
 
-        // 随机图片点击加载新图片
         const historyImage = document.getElementById('historyImage');
         function loadNewImage() {
             const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
             historyImage.src = randomImageUrl;
         }
-
-        // 初始化加载随机图片
         loadNewImage();
 
-        // 获取天气信息
         const weatherElement = document.getElementById('weather');
-        const city = '大连'; // 城市为大连
-
-        // 使用wttr.in获取天气数据，添加 %d 表示风向
+        const city = '大连';
         const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%w+%d`;
 
         fetch(weatherApiUrl)
             .then(response => response.text())
             .then(data => {
-                // 格式化并显示天气信息
-                const weatherDetails = data.split(" ");
-                const weather = weatherDetails[0];  // 天气描述
-                const temperature = weatherDetails[1];  // 温度
-                const humidity = weatherDetails[2];  // 湿度
-                const wind = weatherDetails[3];  // 风速
-                const windDirection = weatherDetails[4];  // 风向 (例如 "N", "NE", "E")
+                console.log("原始天气数据:", data); // 调试输出原始数据
 
-                // 处理风速值，排除非数字字符
-                const windSpeed = wind.replace(/[^\d.]/g, '');  // 只保留数字和小数点
+                // 使用正则表达式更健壮地解析数据
+                const weatherMatch = data.match(/(\S+)\s+([+-]?\d+°C)\s+(\d+%)\s+(\d+km\/h)\s+(\w+)/);
+                if (!weatherMatch) {
+                    throw new Error("数据格式不匹配");
+                }
+
+                const weather = weatherMatch[1];  // 天气描述
+                const temperature = weatherMatch[2];  // 温度
+                const humidity = weatherMatch[3];  // 湿度
+                const wind = weatherMatch[4];  // 风速
+                const windDirection = weatherMatch[5];  // 风向
+
+                console.log("解析结果:", { weather, temperature, humidity, wind, windDirection }); // 调试输出解析结果
+
+                const windSpeed = wind.replace(/[^\d.]/g, '');
                 const windValue = parseFloat(windSpeed);
 
-                // 风速与风级的对应关系
                 let windLevel = '';
                 if (windValue <= 1) windLevel = '0级（静风）';
                 else if (windValue <= 5) windLevel = '1级（轻风）';
@@ -148,11 +139,9 @@
                 else if (windValue <= 88) windLevel = '9级（烈风）';
                 else windLevel = '10级及以上（暴风、大暴风等）';
 
-                // 处理温度值
-                const tempValue = temperature.replace(/[^\d-]/g, '').trim();  // 保留数字和负号
+                const tempValue = temperature.replace(/[^\d-]/g, '').trim();
                 const temp = parseInt(tempValue);
 
-                // 气温与气候的对应关系
                 let temperatureLevel = '';
                 if (temp <= -20) temperatureLevel = '极寒天气，极度寒冷';
                 else if (temp <= -10) temperatureLevel = '寒冷天气，冬季寒冷';
@@ -163,11 +152,9 @@
                 else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
                 else temperatureLevel = '极热天气，注意高温中暑';
 
-                // 处理湿度值
-                const humidityValue = humidity.replace('%', '').trim();  // 去掉百分号
+                const humidityValue = humidity.replace('%', '').trim();
                 const humidityPercent = parseInt(humidityValue);
 
-                // 湿度与天气的对应关系
                 let humidityLevel = '';
                 if (humidityPercent <= 20) humidityLevel = '非常干燥';
                 else if (humidityPercent <= 40) humidityLevel = '干燥';
@@ -175,33 +162,18 @@
                 else if (humidityPercent <= 80) humidityLevel = '潮湿';
                 else humidityLevel = '非常潮湿';
 
-                // 风向符号映射
                 const windDirectionSymbols = {
-                    'N': '↑',   // 北
-                    'NNE': '↗', // 东北偏北
-                    'NE': '↗',  // 东北
-                    'ENE': '↗', // 东北偏东
-                    'E': '→',   // 东
-                    'ESE': '↘', // 东南偏东
-                    'SE': '↘',  // 东南
-                    'SSE': '↘', // 东南偏南
-                    'S': '↓',   // 南
-                    'SSW': '↙', // 西南偏南
-                    'SW': '↙',  // 西南
-                    'WSW': '↙', // 西南偏西
-                    'W': '←',   // 西
-                    'WNW': '↖', // 西北偏西
-                    'NW': '↖',  // 西北
-                    'NNW': '↖'  // 西北偏北
+                    'N': '↑', 'NNE': '↗', 'NE': '↗', 'ENE': '↗', 'E': '→',
+                    'ESE': '↘', 'SE': '↘', 'SSE': '↘', 'S': '↓', 'SSW': '↙',
+                    'SW': '↙', 'WSW': '↙', 'W': '←', 'WNW': '↖', 'NW': '↖', 'NNW': '↖'
                 };
 
-                // 获取风向符号，默认为 "?" 如果未识别
                 const windSymbol = windDirectionSymbols[windDirection] || '?';
 
-                // 更新天气信息显示，添加风向符号
                 weatherElement.innerHTML = `天气：${weather} <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidityPercent}%（${humidityLevel}）<br> 风速：${windSymbol} ${windLevel}`;
             })
-            .catch(() => {
+            .catch(error => {
+                console.error("天气数据加载失败:", error);
                 weatherElement.innerHTML = '无法加载天气信息';
             });
     </script>
