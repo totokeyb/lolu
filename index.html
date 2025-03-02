@@ -67,7 +67,7 @@
         dateElement.textContent = today.toLocaleDateString();
 
         const zodiacImages = {
-            "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
+            "摩羯座": {start: overflows"12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
             "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
             "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
             "白羊座": {start: "03-21", end: "04-19", image: "https://www.astrology-zodiac-signs.com/images/aries.png"},
@@ -141,40 +141,29 @@
         }
         loadNewImage();
 
-        // 天气信息
+        // 使用 API Ninjas 获取天气信息
         const weatherElement = document.getElementById('weather');
-        const city = '大连';
-        const weatherApiUrl = `https://wttr.in/${city}?format=%C+%t+%h+%w+%d`;
+        const city = 'Dalian'; // 大连的英文名
+        const apiKey = 'pnkLnOxSEamxLrHDWB1bfw==AbazRJeZmgWiYv1x';
+        const weatherApiUrl = `https://api.api-ninjas.com/v1/weather?city=${city}`;
 
-        fetch(weatherApiUrl)
-            .then(response => response.text())
+        fetch(weatherApiUrl, {
+            method: 'GET',
+            headers: {
+                'X-Api-Key': apiKey
+            }
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('天气数据请求失败');
+                return response.json();
+            })
             .then(data => {
-                const weatherMatch = data.match(/(\S+)\s+([+-]?\d+°C)\s+(\d+%)\s+([↑↓←→↗↘↙↖]\d+km\/h)/);
-                if (!weatherMatch) throw new Error("数据格式不匹配");
+                const temp = data.temp; // 温度（摄氏度）
+                const humidity = data.humidity; // 湿度（百分比）
+                const windSpeed = data.wind_speed; // 风速（米/秒）
+                const cloudiness = data.cloud_pct; // 云量（百分比）
 
-                const weather = weatherMatch[1];
-                const temperature = weatherMatch[2];
-                const humidity = weatherMatch[3];
-                const windWithDirection = weatherMatch[4];
-                const windSymbol = windWithDirection.match(/[↑↓←→↗↘↙↖]/)[0];
-                const windSpeed = windWithDirection.replace(/[^0-9.]/g, '');
-                const windValue = parseFloat(windSpeed);
-
-                let windLevel = '';
-                if (windValue <= 1) windLevel = '0级（静风）';
-                else if (windValue <= 5) windLevel = '1级（轻风）';
-                else if (windValue <= 11) windLevel = '2级（微风）';
-                else if (windValue <= 19) windLevel = '3级（和风）';
-                else if (windValue <= 28) windLevel = '4级（清风）';
-                else if (windValue <= 38) windLevel = '5级（强风）';
-                else if (windValue <= 49) windLevel = '6级（很强的风）';
-                else if (windValue <= 61) windLevel = '7级（强风）';
-                else if (windValue <= 74) windLevel = '8级（疾风）';
-                else if (windValue <= 88) windLevel = '9级（烈风）';
-                else windLevel = '10级及以上（暴风、大暴风等）';
-
-                const tempValue = temperature.replace(/[^\d-]/g, '').trim();
-                const temp = parseInt(tempValue);
+                // 温度等级
                 let temperatureLevel = '';
                 if (temp <= -20) temperatureLevel = '极寒天气，极度寒冷';
                 else if (temp <= -10) temperatureLevel = '寒冷天气，冬季寒冷';
@@ -185,26 +174,45 @@
                 else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
                 else temperatureLevel = '极热天气，注意高温中暑';
 
-                const humidityValue = humidity.replace('%', '').trim();
-                const humidityPercent = parseInt(humidityValue);
+                // 湿度等级
                 let humidityLevel = '';
-                if (humidityPercent <= 20) humidityLevel = '非常干燥';
-                else if (humidityPercent <= 40) humidityLevel = '干燥';
-                else if (humidityPercent <= 60) humidityLevel = '适宜';
-                else if (humidityPercent <= 80) humidityLevel = '潮湿';
+                if (humidity <= 20) humidityLevel = '非常干燥';
+                else if (humidity <= 40) humidityLevel = '干燥';
+                else if (humidity <= 60) humidityLevel = '适宜';
+                else if (humidity <= 80) humidityLevel = '潮湿';
                 else humidityLevel = '非常潮湿';
+
+                // 风速等级（转换为公里/小时并分类）
+                const windSpeedKmh = (windSpeed * 3.6).toFixed(1); // 米/秒转公里/小时
+                let windLevel = '';
+                if (windSpeedKmh <= 1) windLevel = '0级（静风）';
+                else if (windSpeedKmh <= 5) windLevel = '1级（轻风）';
+                else if (windSpeedKmh <= 11) windLevel = '2级（微风）';
+                else if (windSpeedKmh <= 19) windLevel = '3级（和风）';
+                else if (windSpeedKmh <= 28) windLevel = '4级（清风）';
+                else if (windSpeedKmh <= 38) windLevel = '5级（强风）';
+                else if (windSpeedKmh <= 49) windLevel = '6级（很强的风）';
+                else if (windSpeedKmh <= 61) windLevel = '7级（强风）';
+                else if (windSpeedKmh <= 74) windLevel = '8级（疾风）';
+                else if (windSpeedKmh <= 88) windLevel = '9级（烈风）';
+                else windLevel = '10级及以上（暴风、大暴风等）';
+
+                // 云量描述
+                let cloudDescription = '';
+                if (cloudiness <= 20) cloudDescription = '晴';
+                else if (cloudiness <= 50) cloudDescription = '少云';
+                else if (cloudiness <= 80) cloudDescription = '多云';
+                else cloudDescription = '阴';
 
                 const weatherIcons = {
                     '晴': 'https://img.icons8.com/color/48/000000/sun.png',
-                    '晴天': 'https://img.icons8.com/color/48/000000/sun.png',
+                    '少云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
                     '多云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
-                    '阴': 'https://img.icons8.com/color/48/000000/cloud.png',
-                    '雨': 'https://img.icons8.com/color/48/000000/rain.png',
-                    '雪': 'https://img.icons8.com/color/48/000000/snow.png'
+                    '阴': 'https://img.icons8.com/color/48/000000/cloud.png'
                 };
-                const weatherIcon = weatherIcons[weather] || 'https://img.icons8.com/color/48/000000/question-mark.png';
+                const weatherIcon = weatherIcons[cloudDescription] || 'https://img.icons8.com/color/48/000000/question-mark.png';
 
-                weatherElement.innerHTML = `天气：${weather} <img src="${weatherIcon}" alt="${weather}"> <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidityPercent}%（${humidityLevel}）<br> 风速：${windSymbol} ${windLevel}`;
+                weatherElement.innerHTML = `天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"> <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidity}%（${humidityLevel}）<br> 风速：${windSpeedKmh} km/h（${windLevel}）`;
             })
             .catch(error => {
                 console.error("天气数据加载失败:", error);
