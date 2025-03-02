@@ -179,13 +179,15 @@
                 const pressure = data.main.pressure;
                 const visibility = data.visibility / 1000; // 转换为公里
                 const rain = data.rain ? data.rain['1h'] || 0 : 0; // 过去1小时降雨量，默认0
+                const weatherMain = data.weather[0].main; // 主要天气类型
+                const weatherDescription = data.weather[0].description; // 详细天气描述
 
-                let temperatureLevel = temp <= -20 ? '太冷了' : temp <= -10 ? '好冷啊' : temp <= 0 ? '结冰了' : temp <= 10 ? '凉爽天气' : temp <= 20 ? '温暖天气' : temp <= 25 ? '温和天气' : temp <= 30 ? '有点热' : '太热了';
+                let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
                 let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
                 const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
                 let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
                 let cloudDescription = cloudiness <= 20 ? '晴' : cloudiness <= 50 ? '少云' : cloudiness <= 80 ? '多云' : '阴';
-                
+
                 // 风向计算
                 let windDirection = '';
                 if (windDeg >= 337.5 || windDeg < 22.5) windDirection = '北风';
@@ -197,16 +199,40 @@
                 else if (windDeg >= 247.5 && windDeg < 292.5) windDirection = '西风';
                 else if (windDeg >= 292.5 && windDeg < 337.5) windDirection = '西北风';
 
+                // 扩展天气图标
                 const weatherIcons = {
-                    '晴': 'https://img.icons8.com/color/48/000000/sun.png',
-                    '少云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
-                    '多云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
-                    '阴': 'https://img.icons8.com/color/48/000000/cloud.png'
+                    'Clear': 'https://img.icons8.com/color/48/000000/sun.png', // 晴
+                    'Clouds': 'https://img.icons8.com/color/48/000000/cloud.png', // 云（阴）
+                    'Few clouds': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 少云
+                    'Scattered clouds': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 散云
+                    'Broken clouds': 'https://img.icons8.com/color/48/000000/cloud.png', // 多云
+                    'Overcast clouds': 'https://img.icons8.com/color/48/000000/cloud.png', // 阴
+                    'Rain': 'https://img.icons8.com/color/48/000000/rain.png', // 雨
+                    'Light rain': 'https://img.icons8.com/color/48/000000/light-rain.png', // 小雨
+                    'Moderate rain': 'https://img.icons8.com/color/48/000000/rain.png', // 中雨
+                    'Heavy intensity rain': 'https://img.icons8.com/color/48/000000/heavy-rain.png', // 大雨
+                    'Shower rain': 'https://img.icons8.com/color/48/000000/rain.png', // 阵雨
+                    'Drizzle': 'https://img.icons8.com/color/48/000000/light-rain.png', // 毛毛雨
+                    'Thunderstorm': 'https://img.icons8.com/color/48/000000/storm.png', // 雷雨
+                    'Snow': 'https://img.icons8.com/color/48/000000/snow.png', // 雪
+                    'Light snow': 'https://img.icons8.com/color/48/000000/snow.png', // 小雪
+                    'Heavy snow': 'https://img.icons8.com/color/48/000000/snow-storm.png', // 大雪
+                    'Mist': 'https://img.icons8.com/color/48/000000/fog.png', // 薄雾
+                    'Fog': 'https://img.icons8.com/color/48/000000/fog.png', // 雾
+                    'Haze': 'https://img.icons8.com/color/48/000000/haze.png', // 霾
+                    'Smoke': 'https://img.icons8.com/color/48/000000/smoke.png', // 烟雾
+                    'Dust': 'https://img.icons8.com/color/48/000000/dust.png', // 沙尘
+                    'Sand': 'https://img.icons8.com/color/48/000000/dust.png', // 沙暴
+                    'Ash': 'https://img.icons8.com/color/48/000000/dust.png', // 火山灰
+                    'Squall': 'https://img.icons8.com/color/48/000000/wind.png', // 狂风
+                    'Tornado': 'https://img.icons8.com/color/48/000000/tornado.png' // 龙卷风
                 };
-                const weatherIcon = weatherIcons[cloudDescription] || 'https://img.icons8.com/color/48/000000/question-mark.png';
+
+                // 根据 weatherMain 和 weatherDescription 选择图标
+                let weatherIcon = weatherIcons[weatherDescription] || weatherIcons[weatherMain] || 'https://img.icons8.com/color/48/000000/question-mark.png';
 
                 weatherElement.innerHTML = `
-                    天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"><br>
+                    天气：${weatherDescription} <img src="${weatherIcon}" alt="${weatherDescription}"><br>
                     气温：${temp}°C（${temperatureLevel}）<br>
                     体感温度：${feelsLike}°C<br>
                     湿度：${humidity}%（${humidityLevel}）<br>
