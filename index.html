@@ -33,10 +33,11 @@
             vertical-align: middle;
             margin-left: 10px;
         }
-        button {
-            padding: 5px 10px;
-            margin: 5px;
-            cursor: pointer;
+        #zodiacImage {
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            cursor: pointer; /* 添加鼠标指针，提示可点击 */
         }
     </style>
 </head>
@@ -44,7 +45,7 @@
     <h1>Today is 今天</h1>
 
     <div id="date">今天是：<span id="todayDate"></span> | 星座：<span id="zodiacName"></span>
-    <img id="zodiacImage" alt="星座图片" style="width: 50px; height: 50px; margin-left: 10px;">
+    <img id="zodiacImage" alt="星座图片">
     </div>
 
     <div id="time">当前时间：<span id="currentTime"></span></div>
@@ -56,12 +57,6 @@
     </div>
 
     <div id="weather">天气情况：加载中...</div>
-
-    <div>
-        <button onclick="changeBackground('#f5f5f5')">默认背景</button>
-        <button onclick="changeBackground('#e0f7fa')">浅蓝</button>
-        <button onclick="changeBackground('#f1e0ff')">浅紫</button>
-    </div>
 
     <script>
         // 日期和星座
@@ -216,10 +211,25 @@
                 weatherElement.innerHTML = '无法加载天气信息';
             });
 
-        // 背景颜色切换
-        function changeBackground(color) {
-            document.body.style.backgroundColor = color;
+        // 背景颜色切换（绑定到星座图片）
+        const backgroundColors = [
+            '#f5f5f5', // 默认灰白
+            '#e0f7fa', // 浅蓝
+            '#f1e0ff', // 浅紫
+            '#ffebee', // 浅红
+            '#e8f5e9', // 浅绿
+            '#fff3e0', // 浅橙
+            '#e0f2f1', // 青色
+            '#f3e5f5'  // 淡粉
+        ];
+        let colorIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundColor = backgroundColors[colorIndex];
+            colorIndex = (colorIndex + 1) % backgroundColors.length; // 循环切换
         }
+
+        zodiacImageElement.onclick = changeBackground;
     </script>
 </body>
 </html>
