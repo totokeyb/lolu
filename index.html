@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f5f5f5; /* 默认背景保持灰白 */
             transition: background-color 0.5s;
         }
         h1 {
@@ -37,7 +37,7 @@
             width: 50px;
             height: 50px;
             margin-left: 10px;
-            cursor: pointer; /* 添加鼠标指针，提示可点击 */
+            cursor: pointer;
         }
     </style>
 </head>
@@ -213,20 +213,20 @@
 
         // 背景颜色切换（绑定到星座图片）
         const backgroundColors = [
-            '#f5f5f5', // 默认灰白
-            '#e0f7fa', // 浅蓝
+            '#e0f7fa', // 浅蓝（第一次点击）
             '#f1e0ff', // 浅紫
             '#ffebee', // 浅红
             '#e8f5e9', // 浅绿
             '#fff3e0', // 浅橙
             '#e0f2f1', // 青色
-            '#f3e5f5'  // 淡粉
+            '#f3e5f5', // 淡粉
+            '#f5f5f5'  // 灰白（放在最后）
         ];
         let colorIndex = 0;
 
         function changeBackground() {
             document.body.style.backgroundColor = backgroundColors[colorIndex];
-            colorIndex = (colorIndex + 1) % backgroundColors.length; // 循环切换
+            colorIndex = (colorIndex + 1) % backgroundColors.length;
         }
 
         zodiacImageElement.onclick = changeBackground;
