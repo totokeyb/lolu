@@ -199,40 +199,66 @@
                 else if (windDeg >= 247.5 && windDeg < 292.5) windDirection = '西风';
                 else if (windDeg >= 292.5 && windDeg < 337.5) windDirection = '西北风';
 
-                // 扩展天气图标
-                const weatherIcons = {
-                    'Clear': 'https://img.icons8.com/color/48/000000/sun.png', // 晴
-                    'Clouds': 'https://img.icons8.com/color/48/000000/cloud.png', // 云（阴）
-                    'Few clouds': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 少云
-                    'Scattered clouds': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 散云
-                    'Broken clouds': 'https://img.icons8.com/color/48/000000/cloud.png', // 多云
-                    'Overcast clouds': 'https://img.icons8.com/color/48/000000/cloud.png', // 阴
-                    'Rain': 'https://img.icons8.com/color/48/000000/rain.png', // 雨
-                    'Light rain': 'https://img.icons8.com/color/48/000000/light-rain.png', // 小雨
-                    'Moderate rain': 'https://img.icons8.com/color/48/000000/rain.png', // 中雨
-                    'Heavy intensity rain': 'https://img.icons8.com/color/48/000000/heavy-rain.png', // 大雨
-                    'Shower rain': 'https://img.icons8.com/color/48/000000/rain.png', // 阵雨
-                    'Drizzle': 'https://img.icons8.com/color/48/000000/light-rain.png', // 毛毛雨
-                    'Thunderstorm': 'https://img.icons8.com/color/48/000000/storm.png', // 雷雨
-                    'Snow': 'https://img.icons8.com/color/48/000000/snow.png', // 雪
-                    'Light snow': 'https://img.icons8.com/color/48/000000/snow.png', // 小雪
-                    'Heavy snow': 'https://img.icons8.com/color/48/000000/snow-storm.png', // 大雪
-                    'Mist': 'https://img.icons8.com/color/48/000000/fog.png', // 薄雾
-                    'Fog': 'https://img.icons8.com/color/48/000000/fog.png', // 雾
-                    'Haze': 'https://img.icons8.com/color/48/000000/haze.png', // 霾
-                    'Smoke': 'https://img.icons8.com/color/48/000000/smoke.png', // 烟雾
-                    'Dust': 'https://img.icons8.com/color/48/000000/dust.png', // 沙尘
-                    'Sand': 'https://img.icons8.com/color/48/000000/dust.png', // 沙暴
-                    'Ash': 'https://img.icons8.com/color/48/000000/dust.png', // 火山灰
-                    'Squall': 'https://img.icons8.com/color/48/000000/wind.png', // 狂风
-                    'Tornado': 'https://img.icons8.com/color/48/000000/tornado.png' // 龙卷风
+                // 天气描述翻译成中文
+                const weatherTranslations = {
+                    'clear sky': '晴空',
+                    'few clouds': '少云',
+                    'scattered clouds': '疏云',
+                    'broken clouds': '多云',
+                    'overcast clouds': '阴天',
+                    'light rain': '小雨',
+                    'moderate rain': '中雨',
+                    'heavy intensity rain': '大雨',
+                    'shower rain': '阵雨',
+                    'rain': '雨',
+                    'thunderstorm': '雷雨',
+                    'snow': '雪',
+                    'light snow': '小雪',
+                    'heavy snow': '大雪',
+                    'mist': '薄雾',
+                    'fog': '雾',
+                    'haze': '霾',
+                    'smoke': '烟雾',
+                    'dust': '沙尘',
+                    'sand': '沙暴',
+                    'ash': '火山灰',
+                    'squall': '狂风',
+                    'tornado': '龙卷风'
                 };
 
                 // 根据 weatherMain 和 weatherDescription 选择图标
-                let weatherIcon = weatherIcons[weatherDescription] || weatherIcons[weatherMain] || 'https://img.icons8.com/color/48/000000/question-mark.png';
+                const weatherIcons = {
+                    '晴空': 'https://img.icons8.com/color/48/000000/sun.png', // 晴
+                    '少云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 少云
+                    '疏云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png', // 散云
+                    '多云': 'https://img.icons8.com/color/48/000000/cloud.png', // 多云
+                    '阴天': 'https://img.icons8.com/color/48/000000/cloud.png', // 阴
+                    '小雨': 'https://img.icons8.com/color/48/000000/light-rain.png', // 小雨
+                    '中雨': 'https://img.icons8.com/color/48/000000/rain.png', // 中雨
+                    '大雨': 'https://img.icons8.com/color/48/000000/heavy-rain.png', // 大雨
+                    '阵雨': 'https://img.icons8.com/color/48/000000/rain.png', // 阵雨
+                    '雨': 'https://img.icons8.com/color/48/000000/rain.png', // 雨
+                    '雷雨': 'https://img.icons8.com/color/48/000000/storm.png', // 雷雨
+                    '雪': 'https://img.icons8.com/color/48/000000/snow.png', // 雪
+                    '小雪': 'https://img.icons8.com/color/48/000000/snow.png', // 小雪
+                    '大雪': 'https://img.icons8.com/color/48/000000/snow-storm.png', // 大雪
+                    '薄雾': 'https://img.icons8.com/color/48/000000/fog.png', // 薄雾
+                    '雾': 'https://img.icons8.com/color/48/000000/fog.png', // 雾
+                    '霾': 'https://img.icons8.com/color/48/000000/haze.png', // 霾
+                    '烟雾': 'https://img.icons8.com/color/48/000000/smoke.png', // 烟雾
+                    '沙尘': 'https://img.icons8.com/color/48/000000/dust.png', // 沙尘
+                    '沙暴': 'https://img.icons8.com/color/48/000000/dust.png', // 沙暴
+                    '火山灰': 'https://img.icons8.com/color/48/000000/dust.png', // 火山灰
+                    '狂风': 'https://img.icons8.com/color/48/000000/wind.png', // 狂风
+                    '龙卷风': 'https://img.icons8.com/color/48/000000/tornado.png' // 龙卷风
+                };
+
+                // 获取中文天气描述
+                const translatedWeather = weatherTranslations[weatherDescription.toLowerCase()] || weatherTranslations[weatherMain.toLowerCase()] || '未知天气';
+                let weatherIcon = weatherIcons[translatedWeather] || 'https://img.icons8.com/color/48/000000/question-mark.png';
 
                 weatherElement.innerHTML = `
-                    天气：${weatherDescription} <img src="${weatherIcon}" alt="${weatherDescription}"><br>
+                    天气：${translatedWeather} <img src="${weatherIcon}" alt="${translatedWeather}"><br>
                     气温：${temp}°C（${temperatureLevel}）<br>
                     体感温度：${feelsLike}°C<br>
                     湿度：${humidity}%（${humidityLevel}）<br>
