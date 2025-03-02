@@ -1,55 +1,203 @@
-const weatherElement = document.getElementById('weather');
-const city = 'Dalian';
-const apiKey = 'ba3455276dd9552eac873e694f03d87f'; // 替换为你的 OpenWeatherMap API 密钥
-const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
-fetch(weatherApiUrl)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`请求失败，状态码: ${response.status}`);
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today is 今天</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+            transition: background-color 0.5s;
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log("天气数据:", data);
-        if (!data.main || !data.weather) throw new Error("数据不完整");
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        #date, #time, #quote, #weather {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #historyImage {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        #weather img {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        #zodiacImage {
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Today is 今天</h1>
 
-        const temp = data.main.temp;
-        const humidity = data.main.humidity;
-        const windSpeed = data.wind.speed;
-        const cloudiness = data.clouds.all;
-        const feelsLike = data.main.feels_like;
-        const pressure = data.main.pressure;
-        const visibility = data.visibility / 1000; // 转换为公里
-        const rain = data.rain ? data.rain['1h'] || 0 : 0; // 过去1小时降雨量，默认0
+    <div id="date">今天是：<span id="todayDate"></span> | 星座：<span id="zodiacName"></span>
+    <img id="zodiacImage" alt="星座图片">
+    </div>
 
-        let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
-        let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
-        const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
-        let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
-        let cloudDescription = cloudiness <= 20 ? '晴' : cloudiness <= 50 ? '少云' : cloudiness <= 80 ? '多云' : '阴';
+    <div id="time">当前时间：<span id="currentTime"></span></div>
 
-        const weatherIcons = {
-            '晴': 'https://img.icons8.com/color/48/000000/sun.png',
-            '少云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
-            '多云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
-            '阴': 'https://img.icons8.com/color/48/000000/cloud.png'
+    <div id="quote">每日名言：<span id="quoteText">加载中...</span></div>
+
+    <div>
+        <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
+    </div>
+
+    <div id="weather">天气情况：加载中...</div>
+
+    <script>
+        // 日期和星座
+        const today = new Date();
+        const dateElement = document.getElementById('todayDate');
+        const zodiacSignElement = document.getElementById('zodiacName');
+        const zodiacImageElement = document.getElementById('zodiacImage');
+        dateElement.textContent = today.toLocaleDateString();
+
+        const zodiacImages = {
+            "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
+            "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
+            "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
+            "白羊座": {start: "03-21", end: "04-19", image: "https://www.astrology-zodiac-signs.com/images/aries.png"},
+            "金牛座": {start: "04-20", end: "05-20", image: "https://www.astrology-zodiac-signs.com/images/taurus.png"},
+            "双子座": {start: "05-21", end: "06-20", image: "https://www.astrology-zodiac-signs.com/images/gemini.png"},
+            "巨蟹座": {start: "06-21", end: "07-22", image: "https://www.astrology-zodiac-signs.com/images/cancer.png"},
+            "狮子座": {start: "07-23", end: "08-22", image: "https://www.astrology-zodiac-signs.com/images/leo.png"},
+            "处女座": {start: "08-23", end: "09-22", image: "https://www.astrology-zodiac-signs.com/images/virgo.png"},
+            "天秤座": {start: "09-23", end: "10-22", image: "https://www.astrology-zodiac-signs.com/images/libra.png"},
+            "天蝎座": {start: "10-23", end: "11-21", image: "https://www.astrology-zodiac-signs.com/images/scorpio.png"},
+            "射手座": {start: "11-22", end: "12-21", image: "https://www.astrology-zodiac-signs.com/images/sagittarius.png"}
         };
-        const weatherIcon = weatherIcons[cloudDescription] || 'https://img.icons8.com/color/48/000000/question-mark.png';
 
-        weatherElement.innerHTML = `
-            天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"><br>
-            气温：${temp}°C（${temperatureLevel}）<br>
-            体感温度：${feelsLike}°C<br>
-            湿度：${humidity}%（${humidityLevel}）<br>
-            风速：${windSpeedKmh} km/h（${windLevel}）<br>
-            云量：${cloudiness}%<br>
-            气压：${pressure} hPa<br>
-            能见度：${visibility} km<br>
-            降雨量（过去1小时）：${rain} mm
-        `;
-    })
-    .catch(error => {
-        console.error("天气加载失败:", error);
-        weatherElement.innerHTML = `无法加载天气信息：${error.message}`;
-    });
+        function getZodiacSign(day, month) {
+            for (const [sign, {start, end, image}] of Object.entries(zodiacImages)) {
+                const [startMonth, startDay] = start.split("-").map(Number);
+                const [endMonth, endDay] = end.split("-").map(Number);
+                if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
+                    return { sign, image };
+                }
+            }
+        }
+
+        const zodiac = getZodiacSign(today.getDate(), today.getMonth() + 1);
+        zodiacSignElement.textContent = zodiac.sign;
+        zodiacImageElement.src = zodiac.image;
+
+        // 实时时间
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleTimeString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 每日名言
+        const quotes = [
+            "成功的秘诀在于始终坚持自己的目标。——托马斯·爱迪生",
+            "生活不是等待风暴过去，而是学会在雨中起舞。——维维安·格林",
+            "你今天的努力，是为了明天不必后悔。——佚名",
+            "最伟大的荣耀不在于永不跌倒，而在于每次跌倒后都能站起来。——纳尔逊·曼德拉",
+            "相信自己，你能做到比你想象的更多。——玛丽·凯·阿什",
+            "不要因为害怕失败而不敢开始，失败是成功之母。——中文谚语",
+            "人生最大的冒险，就是不去冒险。——约翰·C·马克斯韦尔",
+            "每一次努力都是一颗种子，终有一天会开花结果。——佚名",
+            "幸福不是你拥有多少，而是你感恩多少。——奥普拉·温弗瑞",
+            "时间是最好的老师，但遗憾的是，它总在最后才教给我们最重要的一课。——卡尔·桑德堡"
+        ];
+
+        function getRandomQuote() {
+            let usedQuotes = JSON.parse(localStorage.getItem('usedQuotes')) || [];
+            let availableQuotes = quotes.filter(q => !usedQuotes.includes(q));
+            if (availableQuotes.length === 0) {
+                usedQuotes = [];
+                availableQuotes = quotes.slice();
+            }
+            const quote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
+            usedQuotes.push(quote);
+            localStorage.setItem('usedQuotes', JSON.stringify(usedQuotes));
+            return quote;
+        }
+        document.getElementById('quoteText').textContent = getRandomQuote();
+
+        // 随机图片
+        const historyImage = document.getElementById('historyImage');
+        function loadNewImage() {
+            const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
+            historyImage.src = randomImageUrl;
+            historyImage.onerror = () => {
+                console.error("图片加载失败");
+                historyImage.src = 'https://via.placeholder.com/600x400?text=图片加载失败';
+            };
+        }
+        loadNewImage();
+
+        // 使用 OpenWeatherMap 获取天气信息
+        const weatherElement = document.getElementById('weather');
+        const city = 'Dalian';
+        const apiKey = 'ba3455276dd9552eac873e694f03d87f'; // 替换为你的 OpenWeatherMap API 密钥
+        const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+        fetch(weatherApiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`请求失败，状态码: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("天气数据:", data);
+                if (!data.main || !data.weather) throw new Error("数据不完整");
+
+                const temp = data.main.temp;
+                const humidity = data.main.humidity;
+                const windSpeed = data.wind.speed;
+                const cloudiness = data.clouds.all;
+
+                let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
+                let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
+                const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
+                let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
+                let cloudDescription = cloudiness <= 20 ? '晴' : cloudiness <= 50 ? '少云' : cloudiness <= 80 ? '多云' : '阴';
+
+                const weatherIcons = {
+                    '晴': 'https://img.icons8.com/color/48/000000/sun.png',
+                    '少云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
+                    '多云': 'https://img.icons8.com/color/48/000000/partly-cloudy-day.png',
+                    '阴': 'https://img.icons8.com/color/48/000000/cloud.png'
+                };
+                const weatherIcon = weatherIcons[cloudDescription] || 'https://img.icons8.com/color/48/000000/question-mark.png';
+
+                weatherElement.innerHTML = `天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"> <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidity}%（${humidityLevel}）<br> 风速：${windSpeedKmh} km/h（${windLevel}）`;
+            })
+            .catch(error => {
+                console.error("天气加载失败:", error);
+                weatherElement.innerHTML = `无法加载天气信息：${error.message}`;
+            });
+
+        // 背景颜色切换
+        const backgroundColors = [
+            '#e0f7fa', '#f1e0ff', '#ffebee', '#e8f5e9', '#fff3e0', '#e0f2f1', '#f3e5f5', '#f5f5f5'
+        ];
+        let colorIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundColor = backgroundColors[colorIndex];
+            console.log("背景颜色切换为:", backgroundColors[colorIndex]);
+            colorIndex = (colorIndex + 1) % backgroundColors.length;
+        }
+
+        zodiacImageElement.addEventListener('click', changeBackground);
+    </script>
+</body>
+</html>
