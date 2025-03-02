@@ -67,7 +67,7 @@
         dateElement.textContent = today.toLocaleDateString();
 
         const zodiacImages = {
-            "摩羯座": {start: overflows"12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
+            "摩羯座": {start: "12-22", end: "01-19", image: "https://www.astrology-zodiac-signs.com/images/capricorn.png"},
             "水瓶座": {start: "01-20", end: "02-18", image: "https://www.astrology-zodiac-signs.com/images/aquarius.png"},
             "双鱼座": {start: "02-19", end: "03-20", image: "https://www.astrology-zodiac-signs.com/images/pisces.png"},
             "白羊座": {start: "03-21", end: "04-19", image: "https://www.astrology-zodiac-signs.com/images/aries.png"},
@@ -119,18 +119,15 @@
         function getRandomQuote() {
             let usedQuotes = JSON.parse(localStorage.getItem('usedQuotes')) || [];
             let availableQuotes = quotes.filter(q => !usedQuotes.includes(q));
-
             if (availableQuotes.length === 0) {
                 usedQuotes = [];
                 availableQuotes = quotes.slice();
             }
-
             const quote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
             usedQuotes.push(quote);
             localStorage.setItem('usedQuotes', JSON.stringify(usedQuotes));
             return quote;
         }
-
         document.getElementById('quoteText').textContent = getRandomQuote();
 
         // 随机图片
@@ -138,12 +135,16 @@
         function loadNewImage() {
             const randomImageUrl = `https://picsum.photos/600/400?random=${new Date().getTime()}`;
             historyImage.src = randomImageUrl;
+            historyImage.onerror = () => {
+                console.error("图片加载失败");
+                historyImage.src = 'https://via.placeholder.com/600x400?text=图片加载失败';
+            };
         }
-        loadNewImage();
+        loadNewImage(); // 初始加载图片
 
         // 使用 API Ninjas 获取天气信息
         const weatherElement = document.getElementById('weather');
-        const city = 'Dalian'; // 大连的英文名
+        const city = 'Dalian';
         const apiKey = 'pnkLnOxSEamxLrHDWB1bfw==AbazRJeZmgWiYv1x';
         const weatherApiUrl = `https://api.api-ninjas.com/v1/weather?city=${city}`;
 
@@ -154,16 +155,22 @@
             }
         })
             .then(response => {
-                if (!response.ok) throw new Error('天气数据请求失败');
+                if (!response.ok) {
+                    throw new Error(`天气数据请求失败，状态码: ${response.status}`);
+                }
                 return response.json();
             })
             .then(data => {
-                const temp = data.temp; // 温度（摄氏度）
-                const humidity = data.humidity; // 湿度（百分比）
-                const windSpeed = data.wind_speed; // 风速（米/秒）
-                const cloudiness = data.cloud_pct; // 云量（百分比）
+                console.log("天气数据:", data); // 调试用，查看返回的数据
+                if (!data.temp || !data.humidity || !data.wind_speed || !data.cloud_pct) {
+                    throw new Error("天气数据不完整");
+                }
 
-                // 温度等级
+                const temp = data.temp;
+                const humidity = data.humidity;
+                const windSpeed = data.wind_speed;
+                const cloudiness = data.cloud_pct;
+
                 let temperatureLevel = '';
                 if (temp <= -20) temperatureLevel = '极寒天气，极度寒冷';
                 else if (temp <= -10) temperatureLevel = '寒冷天气，冬季寒冷';
@@ -174,7 +181,6 @@
                 else if (temp <= 30) temperatureLevel = '炎热天气，注意防暑';
                 else temperatureLevel = '极热天气，注意高温中暑';
 
-                // 湿度等级
                 let humidityLevel = '';
                 if (humidity <= 20) humidityLevel = '非常干燥';
                 else if (humidity <= 40) humidityLevel = '干燥';
@@ -182,8 +188,7 @@
                 else if (humidity <= 80) humidityLevel = '潮湿';
                 else humidityLevel = '非常潮湿';
 
-                // 风速等级（转换为公里/小时并分类）
-                const windSpeedKmh = (windSpeed * 3.6).toFixed(1); // 米/秒转公里/小时
+                const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
                 let windLevel = '';
                 if (windSpeedKmh <= 1) windLevel = '0级（静风）';
                 else if (windSpeedKmh <= 5) windLevel = '1级（轻风）';
@@ -197,7 +202,6 @@
                 else if (windSpeedKmh <= 88) windLevel = '9级（烈风）';
                 else windLevel = '10级及以上（暴风、大暴风等）';
 
-                // 云量描述
                 let cloudDescription = '';
                 if (cloudiness <= 20) cloudDescription = '晴';
                 else if (cloudiness <= 50) cloudDescription = '少云';
@@ -216,28 +220,29 @@
             })
             .catch(error => {
                 console.error("天气数据加载失败:", error);
-                weatherElement.innerHTML = '无法加载天气信息';
+                weatherElement.innerHTML = '无法加载天气信息，请检查网络或API密钥';
             });
 
-        // 背景颜色切换（绑定到星座图片）
+        // 背景颜色切换
         const backgroundColors = [
-            '#e0f7fa', // 浅蓝（第一次点击）
+            '#e0f7fa', // 浅蓝
             '#f1e0ff', // 浅紫
             '#ffebee', // 浅红
             '#e8f5e9', // 浅绿
             '#fff3e0', // 浅橙
             '#e0f2f1', // 青色
             '#f3e5f5', // 淡粉
-            '#f5f5f5'  // 灰白（放在最后）
+            '#f5f5f5'  // 灰白
         ];
         let colorIndex = 0;
 
         function changeBackground() {
             document.body.style.backgroundColor = backgroundColors[colorIndex];
+            console.log("背景颜色切换为:", backgroundColors[colorIndex]); // 调试用
             colorIndex = (colorIndex + 1) % backgroundColors.length;
         }
 
-        zodiacImageElement.onclick = changeBackground;
+        zodiacImageElement.addEventListener('click', changeBackground); // 使用 addEventListener 确保事件绑定
     </script>
 </body>
 </html>
