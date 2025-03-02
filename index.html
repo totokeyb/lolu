@@ -163,6 +163,10 @@
                 const humidity = data.main.humidity;
                 const windSpeed = data.wind.speed;
                 const cloudiness = data.clouds.all;
+                const feelsLike = data.main.feels_like;
+                const pressure = data.main.pressure;
+                const visibility = data.visibility / 1000; // 转换为公里
+                const rain = data.rain ? data.rain['1h'] || 0 : 0; // 过去1小时降雨量，默认0
 
                 let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
                 let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
@@ -178,7 +182,17 @@
                 };
                 const weatherIcon = weatherIcons[cloudDescription] || 'https://img.icons8.com/color/48/000000/question-mark.png';
 
-                weatherElement.innerHTML = `天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"> <br> 气温：${temp}°C（${temperatureLevel}）<br> 湿度：${humidity}%（${humidityLevel}）<br> 风速：${windSpeedKmh} km/h（${windLevel}）`;
+                weatherElement.innerHTML = `
+                    天气：${cloudDescription} <img src="${weatherIcon}" alt="${cloudDescription}"><br>
+                    气温：${temp}°C（${temperatureLevel}）<br>
+                    体感温度：${feelsLike}°C<br>
+                    湿度：${humidity}%（${humidityLevel}）<br>
+                    风速：${windSpeedKmh} km/h（${windLevel}）<br>
+                    云量：${cloudiness}%<br>
+                    气压：${pressure} hPa<br>
+                    能见度：${visibility} km<br>
+                    降雨量（过去1小时）：${rain} mm
+                `;
             })
             .catch(error => {
                 console.error("天气加载失败:", error);
