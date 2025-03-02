@@ -39,6 +39,18 @@
             margin-left: 10px;
             cursor: pointer;
         }
+        /* 新增样式：将图片和天气信息并排显示 */
+        #contentWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* 图片和天气之间的间距 */
+            flex-wrap: wrap; /* 响应式，屏幕小的时候换行 */
+        }
+        #weather {
+            text-align: left; /* 天气信息左对齐 */
+            margin: 0; /* 移除默认边距 */
+        }
     </style>
 </head>
 <body>
@@ -52,11 +64,10 @@
 
     <div id="quote">每日名言：<span id="quoteText">加载中...</span></div>
 
-    <div>
+    <div id="contentWrapper">
         <img id="historyImage" alt="随机图片" onclick="loadNewImage()">
+        <div id="weather">天气情况：加载中...</div>
     </div>
-
-    <div id="weather">天气情况：加载中...</div>
 
     <script>
         // 日期和星座
@@ -169,7 +180,7 @@
                 const visibility = data.visibility / 1000; // 转换为公里
                 const rain = data.rain ? data.rain['1h'] || 0 : 0; // 过去1小时降雨量，默认0
 
-                let temperatureLevel = temp <= -20 ? '极寒天气，极度寒冷' : temp <= -10 ? '寒冷天气，冬季寒冷' : temp <= 0 ? '较冷天气，寒冷' : temp <= 10 ? '凉爽天气，适合外出' : temp <= 20 ? '温暖天气，适宜外出' : temp <= 25 ? '温和天气，舒适宜人' : temp <= 30 ? '炎热天气，注意防暑' : '极热天气，注意高温中暑';
+                let temperatureLevel = temp <= -20 ? '太冷了' : temp <= -10 ? '好冷啊' : temp <= 0 ? '结冰了' : temp <= 10 ? '凉爽天气' : temp <= 20 ? '温暖天气' : temp <= 25 ? '温和天气' : temp <= 30 ? '有点热' : '太热了';
                 let humidityLevel = humidity <= 20 ? '非常干燥' : humidity <= 40 ? '干燥' : humidity <= 60 ? '适宜' : humidity <= 80 ? '潮湿' : '非常潮湿';
                 const windSpeedKmh = (windSpeed * 3.6).toFixed(1);
                 let windLevel = windSpeedKmh <= 1 ? '0级（静风）' : windSpeedKmh <= 5 ? '1级（轻风）' : windSpeedKmh <= 11 ? '2级（微风）' : windSpeedKmh <= 19 ? '3级（和风）' : windSpeedKmh <= 28 ? '4级（清风）' : windSpeedKmh <= 38 ? '5级（强风）' : windSpeedKmh <= 49 ? '6级（很强的风）' : windSpeedKmh <= 61 ? '7级（强风）' : windSpeedKmh <= 74 ? '8级（疾风）' : windSpeedKmh <= 88 ? '9级（烈风）' : '10级及以上（暴风、大暴风等）';
